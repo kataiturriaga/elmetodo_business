@@ -7,12 +7,17 @@
 - Los programas **gratis** son siempre de **3 días/semana**. 
 - Los programas compeltos son de  **3, 4 o 5 días** 
 - Por lo que la continuacion del inicial tiene **3 ramas** (3, 4 o 5 dias)
-- Como quedaria a nivel UX/UI? 
-      - **si ha comprado la continuacion** En la home: dos programas activos (inicial y completo)
-      - **independiente de si ha comprado o no** Dentro del programa gratis, el dropdown muestra **Fase inicial** y **Programa completo** .
-      - **antes de compra**, si entra en **programa completo**, le aparecera un banner para comprar la continuacion: (por insertar link) → **paywall**.
-      - **despues de compra** → **modal de navegación** "Ir al programa completo".
-      - En el programa premium, el dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
+- ¿Cómo quedaría a nivel UX/UI?
+  - **Si ha comprado la continuación:**  
+    En la home: dos programas activos (inicial y completo)
+  - **Independiente de si ha comprado o no:**  
+    Dentro del programa gratis, el dropdown muestra **Fase inicial** y **Programa completo**.
+  - **Antes de compra:**  
+    Si entra en **programa completo**, le aparecerá un banner para comprar la continuación: (por insertar link) → **paywall**.
+  - **Después de compra:**  
+    Modal de navegación "Ir al programa completo".
+  - **En el programa premium:**  
+    El dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
 
 ---
 
