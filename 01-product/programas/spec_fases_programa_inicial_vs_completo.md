@@ -8,14 +8,19 @@
 - Los programas compeltos son de  **3, 4 o 5 días** 
 - Por lo que la continuacion del inicial tiene **3 ramas** (3, 4 o 5 dias)
 - ¿Cómo quedaría a nivel UX/UI?
+
+  - En la home:
   - **Si ha comprado la continuación:**  
-    En la home: dos programas activos (inicial y completo)
+    Dos programas activos (inicial y completo)
+
+  - Dentro del programa gratuito:
   - **Independiente de si ha comprado o no:**  
-    Dentro del programa gratis, el dropdown muestra **Fase inicial** y **Programa completo**.
+    El dropdown muestra **Fase inicial** y **Programa completo**.
   - **Antes de compra:**  
-    Si entra en **programa completo**, le aparecerá un banner para comprar la continuación: (por insertar link) → **paywall**.
+    Con el dropdown en **programa completo**, le aparecerá un banner para comprar la continuación: (por insertar link) → **paywall**. 
   - **Después de compra:**  
-    Modal de navegación "Ir al programa completo".
+    Con el dropdown en **programa completo**, modal de navegación "Ir al programa completo".
+
   - **En el programa premium:**  
     El dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
 
