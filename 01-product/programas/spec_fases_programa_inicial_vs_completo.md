@@ -1,12 +1,18 @@
 # Spec: Fases y programas (Fase inicial gratis + Programa completo premium)
 
 ## TL;DR
-- **Fase inicial (4 semanas)** y **Programa completo (12 semanas)** son **programas distintos a nivel técnico**.
-- A nivel UX, forman una **misma ruta** (p. ej. "Recomposición total").
-- En el programa gratis, el dropdown muestra **Fase inicial** y **Programa completo** (no Fase 1/2/3).
-- Si el usuario no tiene acceso al completo → **paywall**.
-- Si ya tiene acceso → **modal de navegación** "Ir al programa completo".
-- En el programa premium, el dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
+- Guiar al usuario para que, tras el programa gratis, **compre uno de los programas de suscripción** que lo continúa.
+- También ofrecemos ver otros programas; **priorizamos el de continuación** porque convierte más.
+- **Fase inicial, 4 semanas (zona:gratis)** y **Programa completo, 12 semanas (zona:subscripcion)** son **programas distintos a nivel técnico**.
+- Los programas **gratis** son siempre de **3 días/semana**. 
+- Los programas compeltos son de  **3, 4 o 5 días** 
+- Por lo que la continuacion del inicial tiene **3 ramas** (3, 4 o 5 dias)
+Como quedaria a nivel UX/UI? 
+      - **si ha comprado la continuacion** En la home: dos programas activos (inicial y completo)
+      - **independiente de si ha comprado o no** Dentro del programa gratis, el dropdown muestra **Fase inicial** y **Programa completo** .
+      - **antes de compra**, si entra en **programa completo**, le aparecera un banner para comprar la continuacion: (por insertar link) → **paywall**.
+      - **despues de compra** → **modal de navegación** "Ir al programa completo".
+      - En el programa premium, el dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
 
 ---
 
