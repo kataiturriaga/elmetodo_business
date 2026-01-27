@@ -10,18 +10,16 @@
 - ¿Cómo quedaría a nivel UX/UI?
 
   - En la home:
-      **Si ha comprado la continuación:**  
-      Dos programas activos (inicial y completo)
-
+      - **Si ha comprado la continuación:**  
+        Dos programas activos (inicial y completo)
   - Dentro del programa gratuito:
-      **Independiente de si ha comprado o no:**  
-      El dropdown muestra **Fase inicial** y **Programa completo**.
-  - **Antes de compra:**  
-      Con el dropdown en **programa completo**, le aparecerá un banner para comprar la continuación: (por insertar link) → **paywall**. 
-  - **Después de compra:**  
+      - **Independiente de si ha comprado o no:**  
+        El dropdown muestra **Fase inicial** y **Programa completo**.
+      - **Antes de compra:**
+      Con el dropdown en **programa completo**, le aparecerá un banner para comprar la continuación: (por insertar link) → **paywall**.
+      - **Después de compra:**
       Con el dropdown en **programa completo**, modal de navegación "Ir al programa completo".
-
-  - **En el programa premium:**  
+  - **En el programa premium:**
       El dropdown muestra **solo Fase 1/2/3**. La fase inicial no se mezcla ahí.
 
 ---
