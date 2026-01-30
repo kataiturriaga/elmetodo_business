@@ -8,10 +8,12 @@
     - Herramientas: guias rapidas + biblioteca ejercicios
 
     - Fecha de entrega: 4 - 7 febrero
-    - **Decidir AI (arquitecura informacion) 
-https://www.figma.com/design/629ryw0MF7hzDxIFiZJ5Un/App-Automatica?node-id=1229-34245&t=oNaCsggSSyru3vsk-1
+    - **Decidir AI (arquitecura informacion) link abajo
     - Recetas (platos principales + snacks)
     - A la espera de si guias de dieta tambien
+    
+https://www.figma.com/design/629ryw0MF7hzDxIFiZJ5Un/App-Automatica?node-id=1229-34245&t=oNaCsggSSyru3vsk-1
+   
     
 ## Flujos
     - Fecha de entrega: 01 febrero
