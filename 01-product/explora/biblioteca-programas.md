@@ -58,13 +58,11 @@ Las secciones tienen scroll horizontal.
 ---
 
 ## Organización dentro de las secciones
-Mostramos los programas divididos por:
-- lugar de entrenamiento y
-- (fase inicial / programa completo) o (nv. inicial / nv. pro) 
-
-Los programas de fase inicial siempre serán de 3 días.
+- Mostramos los programas completos agrupados por días. Abajo mostramos una etiqueta de "elige los dias" Link abajo
+https://www.figma.com/design/629ryw0MF7hzDxIFiZJ5Un/App-Automatica?node-id=1358-34354&t=OHQlVvYpiLeBNTvN-1 
+- Los programas gratis los mostramos tal cual. Los programas de fase inicial siempre serán de 3 días
 
 ---
 
-## Interacción al tap en un programa
-Si el usuario tapea en un programa le llevará a una pantalla para elegir los días que desea entrenar (3, 4 o 5).
+## Interacción al tap en un programa completo
+Si el usuario tapea en un programa completo le llevará a una pantalla para elegir los días que desea entrenar (3, 4 o 5).
