@@ -35,6 +35,9 @@ program_id: p01 | p12
 program_type: initial | premium
 week: 1 | 2 | 3
 phase: 1 | 2 | 3
+user_state: anonymous | registered
+subscription_state: none | trial | active
+cohort: week_0 | week_1
 
 Ejemplo
 
