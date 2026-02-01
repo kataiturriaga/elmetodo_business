@@ -9,3 +9,5 @@ Ahora:
 - Nv. Pro (3,4,5 dias)
 
 Despues de elegir un programa nv pro te salta a pantalla para elegir dias
+
+Este último paso ademas darás mas sensacion de personalización al elegir un programa que tenga subscripción asociada

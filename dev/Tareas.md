@@ -2,6 +2,7 @@
 
 ## Biblioteca de programas gratis / sub
     - Fecha de entrega: 30 enero
+    - Hecho
 
 ## Explora
     - Fecha de entrega: 2 - 4 febrero
@@ -13,10 +14,13 @@
     - A la espera de si guias de dieta tambien
     
 https://www.figma.com/design/629ryw0MF7hzDxIFiZJ5Un/App-Automatica?node-id=1229-34245&t=oNaCsggSSyru3vsk-1
+
+## Definir criterio: 
+    - Fecha de entrega: 14 Febrero
+    Seccion Programas nuevos en la home
    
-    
 ## Flujos
-    - Fecha de entrega: 01 febrero
+    - Fecha de entrega: 01 marzo
     - Definir estos flujos
         - Desde programa inicial > programa completo > elegir dias > comprar subscripción 
         - Desde programa inicial > programa completo > explorar otros programas
