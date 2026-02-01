@@ -1,3 +1,7 @@
+# Regla práctica:
+
+No se crean eventos distintos solo por cambiar el lugar donde está el CTA.
+
 # Qué es un evento
 Un evento representa una acción o intención clara del usuario.
 
@@ -109,10 +113,6 @@ Ejemplo:
 step_counter_activate_clicked
 origin: home | onboarding
 
-
-Regla práctica:
-
-No se crean eventos distintos solo por cambiar el lugar donde está el CTA.
 
 7. Intención vs resultado (evento doble)
 
@@ -227,7 +227,7 @@ problemas de permiso vs copy
 
 diferencias entre entradas
 
-10. Regla práctica sobre Analytics
+# 10. Regla práctica sobre Analytics
 
 Todo param que quieras analizar en GA4 debe registrarse como Custom Dimension (Event-scope).
 
@@ -254,3 +254,5 @@ solo hay un punto de activación
 solo hay un estado posible
 
 no hay comparación que hacer (por ahora)
+
+# analytics con no funciona con querys, pero con el tiempo limitado que tenemos 
