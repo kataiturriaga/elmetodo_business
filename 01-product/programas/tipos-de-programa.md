@@ -1,13 +1,10 @@
-# Modificación de la logica de niveles
-para matchear la logica de fase inicial-programa completo
+# Tipos de programa segund acceso y pay
 
-Antes: nv inicial + (nv principiant (3 dias) + nv intermedio (4 dias) + nv avanzado (5 dias))
+- Programa base (3 dias) > 4 semanas de acceso, sin tarjeta. Si quieren extender el acceso > tarjeta
+- Programa completo (3, 4, 5 días) > necesario meter tarjeta, 3 dias de prueba gratuita. Despues acceso de por vida.
 
-Ahora:
+## Flujo programa completo
 
-- Nv. Inicial
-- Nv. Pro (3,4,5 dias)
-
-Despues de elegir un programa nv pro te salta a pantalla para elegir dias
+Despues de elegir un programa completo > elegir los dias a entrenar
 
 Este último paso ademas darás mas sensacion de personalización al elegir un programa que tenga subscripción asociada
