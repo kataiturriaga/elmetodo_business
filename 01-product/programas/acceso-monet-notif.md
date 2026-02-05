@@ -1,4 +1,4 @@
-# DOC 1 — Política de acceso y monetización  
+# Política de acceso y monetización  
 ## (4 semanas free → bloqueo total de entreno)
 
 ---
