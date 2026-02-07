@@ -27,6 +27,10 @@ La pantalla se organiza en 3 secciones principales:
 - **Catálogo de ejercicios**
   - Biblioteca para consultar ejercicios y hacer entrenos sueltos
 
+Idea 07.feb.26 > en vez de catalogo de ejercicios, entrenos sueltos de menos de 25 minutos
+o entrenos sueltos y poder filtrarlos por tiempo
+Publico objetivo de esta funcionalidad: hoy quiere algo rapido sin compromiso. tiene poco tiempo y quiere ejercitarse
+
 ---
 
 ## Reglas y consideraciones (MVP)
