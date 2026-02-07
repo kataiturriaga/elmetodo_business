@@ -1,9 +1,9 @@
 # Ideas
 
 ## Ofrecer mas guia en la dieta 
-07.feb.26
-Estado: sin comentar
-Meter un banner/servicio "si necesitas ayuda con la dieta, puedes contraatar a uno de nuestros especialistas"
+- 07.feb.26
+- Estado: sin comentar
+- Meter un banner/servicio "si necesitas ayuda con la dieta, puedes contraatar a uno de nuestros especialistas"
 Ofrecer paquetes de nutri
 
 ## Programa vida ocupada:
