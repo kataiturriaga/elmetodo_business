@@ -32,3 +32,21 @@
 - **Cuando** hoy me toca “alto en proteína” o “más ligero” según mi semana,
 - **quiero** recetas filtradas por objetivo (déficit, mantenimiento, volumen) y por macros,
 - **para** elegir rápido lo que mejor me conviene.
+
+
+## Funcionalidades MVP
+
+- Lista de recetas
+    - Selector: desayuno, comida, cena, snack, picantes favoritos
+- Dentro de una receta:
+    - Selector: x1, con un + vas a añadiendo, x2, x3, x4 etc
+    - Selector: Ligero , normal, bestial 
+
+    - Ingredientes (variables segun selectores)
+    - Receta
+    
+    - Guardar como favorito
+
+## Funcionalidades fuera de MVP
+    - Hacer foto y compartir en comunidad
+
