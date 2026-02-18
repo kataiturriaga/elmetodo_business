@@ -1,0 +1,14 @@
+- Eliminar cuenta no funciona
+- Me ha tardado en cargar las fotos de los programas
+- Si borras la app y la vuelves a instalar, aun teniendo programas activos te vuelve a pasar el onboarding de entreno
+- Porque no esta devolviendo los de 5k etc en catalogo de programas
+- Cambiar la visualización de tiempo en la app a hh:mm:ss
+- Si no metes un valor en una serie no se te marca como completada (en verde en el ejecicio y en series completadas en el training Day
+- Usuarios de asesorías salen en el ranking
+- Archivar no funciona
+- Error 404 en recetas  
+- Flujo calculadora de calorias no tiene exit al final
+- Error 404 en guias rapidas
+- Error 404 en historial entrenamiento
+- Quitar el muñeco de la splash screen
+- Añadir descripción en las tarjetas de elegir programa por primera vez
