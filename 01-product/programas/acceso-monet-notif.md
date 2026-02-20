@@ -148,26 +148,6 @@ Evitar: “pierdes acceso”, “bloqueado” como mensaje principal.
 
 ---
 
-## Métricas que hay que mirar sí o sí
-- % usuarios que activan un Programa Base (D0 activation)
-- % usuarios que llegan a D7 / D11 / D14
-- CTR de banners (D7, D11)
-- Trial start rate (D7–D14)
-- Conversion rate post-trial
-- Churn al expirar (D15: tocan Entreno/Explora y se van)
-- % usuarios que navegan a Entreno > Catálogo (descubrimiento)
+## Métricas (por definir)
 
 ---
-
-## Riesgos + mitigación
-
-### Riesgo: frustración “empecé un programa y ahora no puedo continuar”
-Mitigación:
-- Framing desde el inicio: “fase de inicio 14 días”
-- Mensajes progresivos near-expiry
-- Pantalla de expirado como “graduación” (siguiente nivel), no castigo
-
-### Riesgo: confusión por mantener Catálogo accesible pero bloquear Tus programas
-Mitigación:
-- Copy/estado claro en “Tus programas” (graduación + CTA)
-- Mensajería consistente en Catálogo (se definirá comportamiento exacto más adelante)
