@@ -148,6 +148,12 @@ Evitar: “pierdes acceso”, “bloqueado” como mensaje principal.
 
 ---
 
+## Flujos de entrada a suscripción
+
+> Documentados en detalle en `subscripcion/flujos-entrada.md`.
+
+---
+
 ## Métricas (por definir)
 
 ---
