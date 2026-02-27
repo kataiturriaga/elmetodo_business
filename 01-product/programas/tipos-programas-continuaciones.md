@@ -106,7 +106,8 @@ El dropdown permite cambiar el "contexto" de lo que estás viendo:
 
 ---
 
-## Estados de "Siguiente nivel" (según suscripción)
+## Estados de "Siguiente nivel"
+ (según suscripción)
 
 ### Estado 1 — Usuario SIN suscripción
 - Al intentar acceder/activar el "Siguiente nivel" (Programa Completo):

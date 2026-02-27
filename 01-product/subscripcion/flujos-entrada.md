@@ -10,8 +10,8 @@ Todos los caminos por los que un usuario puede llegar al paywall / trial.
 |---|--------|-----------------------------------|-------------|-------------------|---------|
 | 1 | Siguiente nivel (dropdown) | Sí | Sí | Después del paywall | Sí |
 | 2 | Catálogo | Sí | Sí | Antes del paywall | Sí |
-| 3 | Bloqueo D+14 | No (vuelve a su programa) | No | — | Sí |
-| 4 | Explora (bloqueada) | No (desbloquea contenido) | No | — | Sí |
+| 3 | Bloqueo D+14 | No (vuelve a pantalla entreno) | No | — | Sí |
+| 4 | Explora (bloqueada) | No (desbloquea contenido en explora) | No | — | Sí |
 | 5 | Push / banner | No (redirige a paywall) | No | — | Sí |
 
 ---
