@@ -24,3 +24,12 @@
 ## 4) Infraestructura de medición (funcionalidad faltante)
 - No existe un **timer de sesión** (o de bloque) como tal.
 - **Resultado:** no podemos soportar bien “for time / time cap / AMRAP” sin un workaround, y sin timer es difícil dar una “marca” coherente.
+
+
+“¿Qué workaround puedo hacer sin tocar data?”
+
+“¿Qué mínimo UX necesito para que el usuario no use el móvil cada 10 segundos?”
+
+“¿Qué puedo mostrar en Home con lo que ya tengo?”
+
+“¿Hace falta un timer light o lo aplazamos?”
