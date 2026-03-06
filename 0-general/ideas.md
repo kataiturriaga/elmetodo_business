@@ -17,3 +17,7 @@ Entrenos de 25 minutos y vamos subiendo 5 minutos cada fase.
 - Estado: sin comentar
 - En la seccion de explora podemos poner "entrenos rapidos" para esa persona que ese dia quiere algo rapido y sin compromiso. 
 y que pueda filtrarlo por tiempo (25, 30, 45, 60 mins) y por tipo de entreno (cardio, fuerza, hibrido)
+
+
+## idea inazio. 
+Hacer retos / challenges . y que luego se ganen premios

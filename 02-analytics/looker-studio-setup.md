@@ -26,6 +26,8 @@ Para cada una:
 
 ### Fuentes a crear
 
+> he metido hasta habit formation >
+
 | Nombre en Looker Studio | Query del archivo SQL |
 |-------------------------|-----------------------|
 | `KPI - Daily Installs` | Query #1 |

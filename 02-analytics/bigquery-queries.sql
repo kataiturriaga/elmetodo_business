@@ -1,12 +1,12 @@
 -- ============================================================
 -- EL MÉTODO — BigQuery Analytics Queries
 -- Proyecto: automatica-v2
--- Actualiza DATASET_ID con el nombre real (ej: analytics_123456789)
+-- Actualiza analytics_517999677 con el nombre real (ej: analytics_123456789)
 -- ============================================================
 
 -- INSTRUCCIONES:
 -- 1. Abre BigQuery en console.cloud.google.com/bigquery
--- 2. Reemplaza `DATASET_ID` con el nombre de tu dataset (analytics_XXXXXXX)
+-- 2. Reemplaza `analytics_517999677` con el nombre de tu dataset (analytics_XXXXXXX)
 -- 3. Cada query puedes guardarla como una "Saved Query" en BigQuery
 --    o conectarla directamente a Looker Studio
 
@@ -24,7 +24,7 @@
 SELECT
   DATE(TIMESTAMP_MICROS(event_timestamp)) AS date,
   COUNT(DISTINCT user_pseudo_id)          AS installs
-FROM `automatica-v2.DATASET_ID.events_*`
+FROM `automatica-v2.analytics_517999677.events_*`
 WHERE
   event_name = 'first_open'
   AND _TABLE_SUFFIX >= '20260301'
@@ -37,11 +37,13 @@ ORDER BY 1 DESC;
 -- Métrica: % de installs con health_permission_granted OR ranking_unlock_success en D0
 -- Objetivo: ≥40%
 -- ============================================================
+-- falta el evento de ranking enroll por meter(carles)
+
 WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -50,8 +52,8 @@ light_activations AS (
   SELECT DISTINCT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS activation_date
-  FROM `automatica-v2.DATASET_ID.events_*`
-  WHERE event_name IN ('pedometer_permission_granted', 'ranking_enrolled')
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name IN 'pedometer_sync_success'
     AND _TABLE_SUFFIX >= '20260301'
 )
 SELECT
@@ -79,7 +81,7 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -91,11 +93,12 @@ enrolls AS (
     -- Extraer parámetros del evento
     MAX(IF(ep.key = 'entry_point',  ep.value.string_value, NULL)) AS entry_point,
     MAX(IF(ep.key = 'program_type', ep.value.string_value, NULL)) AS program_type
-  FROM `automatica-v2.DATASET_ID.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_*`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'program_enroll'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1, 2
+  HAVING MAX(IF(ep.key = 'entry_point', ep.value.string_value, NULL)) = 'onboarding'
 )
 SELECT
   i.install_date,
@@ -114,6 +117,102 @@ GROUP BY 1
 ORDER BY 1 DESC;
 
 
+-- ACTUALMENTE ESTA ESTE:
+-- Carles tiene que meter el parametro o 'program_enroll' o signup_success
+
+WITH installs AS (
+  SELECT
+    user_pseudo_id,
+    MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name = 'first_open'
+    AND _TABLE_SUFFIX >= '20260301'
+  GROUP BY 1
+),
+signups AS (
+  SELECT
+    user_pseudo_id,
+    DATE(TIMESTAMP_MICROS(event_timestamp)) AS signup_date,
+    MAX(IF(ep.key = 'entry_point', ep.value.string_value, NULL)) AS entry_point
+  FROM `automatica-v2.analytics_517999677.events_*`,
+  UNNEST(event_params) AS ep
+  WHERE event_name = 'signup_method_selected'
+    AND _TABLE_SUFFIX >= '20260301'
+  GROUP BY 1, 2
+)
+SELECT
+  i.install_date,
+  COUNT(DISTINCT i.user_pseudo_id) AS installs,
+  COUNT(DISTINCT s.user_pseudo_id) AS signups_d0_d3,
+  ROUND(
+    COUNT(DISTINCT s.user_pseudo_id) / NULLIF(COUNT(DISTINCT i.user_pseudo_id), 0) * 100,
+    1
+  ) AS signup_rate_pct,
+  20.0 AS objetivo_pct
+FROM installs i
+LEFT JOIN signups s
+  ON i.user_pseudo_id = s.user_pseudo_id
+  AND DATE_DIFF(s.signup_date, i.install_date, DAY) BETWEEN 0 AND 3
+GROUP BY 1
+ORDER BY 1 DESC;
+
+-- creo que si que va el program_enroll. en esta query la uso y ademas le pongo entry_point=onboarding
+
+WITH installs AS (
+  SELECT
+    user_pseudo_id,
+    MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name = 'first_open'
+    AND _TABLE_SUFFIX >= '20260301'
+  GROUP BY 1
+),
+enroll_events AS (
+  SELECT
+    user_pseudo_id,
+    DATE(TIMESTAMP_MICROS(event_timestamp)) AS enroll_date,
+    (
+      SELECT ep.value.string_value
+      FROM UNNEST(event_params) ep
+      WHERE ep.key = 'entry_point'
+      LIMIT 1
+    ) AS entry_point,
+    (
+      SELECT ep.value.string_value
+      FROM UNNEST(event_params) ep
+      WHERE ep.key = 'program_type'
+      LIMIT 1
+    ) AS program_type
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name = 'program_enroll'
+    AND _TABLE_SUFFIX >= '20260301'
+),
+enrolls AS (
+  SELECT
+    user_pseudo_id,
+    enroll_date,
+    entry_point,
+    program_type
+  FROM enroll_events
+  WHERE entry_point = 'onboarding'
+)
+SELECT
+  i.install_date,
+  COUNT(DISTINCT i.user_pseudo_id) AS installs,
+  COUNT(DISTINCT e.user_pseudo_id) AS base_enrolls_d0_d3,
+  ROUND(
+    COUNT(DISTINCT e.user_pseudo_id) / NULLIF(COUNT(DISTINCT i.user_pseudo_id), 0) * 100,
+    1
+  ) AS base_enroll_rate_pct,
+  20.0 AS objetivo_pct
+FROM installs i
+LEFT JOIN enrolls e
+  ON i.user_pseudo_id = e.user_pseudo_id
+  AND DATE_DIFF(e.enroll_date, i.install_date, DAY) BETWEEN 0 AND 3
+GROUP BY 1
+ORDER BY 1 DESC;
+
+
 -- ============================================================
 -- 4. 6 WORKOUTS / 14 DAYS (Base Starters)
 -- Métrica: % de usuarios con program_enroll que completan ≥6 sesiones en 14 días
@@ -123,7 +222,7 @@ WITH enrolls AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS enroll_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'program_enroll'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -132,7 +231,7 @@ sessions AS (
   SELECT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS session_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'training_session_complete'
     AND _TABLE_SUFFIX >= '20260301'
 ),
@@ -172,14 +271,14 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
 ),
 trials AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'trial_started'  -- ajustar cuando esté implementado
     AND _TABLE_SUFFIX >= '20260301'
 )
@@ -208,14 +307,14 @@ WITH trials AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS trial_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'trial_started'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
 ),
 conversions AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'subscription_started'
     AND _TABLE_SUFFIX >= '20260301'
 )
@@ -243,7 +342,7 @@ WITH funnel_events AS (
     user_pseudo_id,
     event_name,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS event_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name IN (
     'first_open',
     'training_onboarding_continue_clicked',
@@ -277,7 +376,7 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -286,7 +385,7 @@ activity AS (
   SELECT DISTINCT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS activity_date
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE _TABLE_SUFFIX >= '20260301'
     AND event_name NOT IN ('first_open', 'session_start', 'app_remove')
 )
@@ -314,7 +413,7 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(TIMESTAMP_MICROS(event_timestamp)) AS install_ts
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -323,7 +422,7 @@ first_session AS (
   SELECT
     user_pseudo_id,
     MIN(TIMESTAMP_MICROS(event_timestamp)) AS first_session_ts
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'training_session_complete'
     AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
@@ -346,13 +445,13 @@ WHERE f.user_pseudo_id IS NOT NULL;
 -- ============================================================
 WITH guests AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'guest_login'
     AND _TABLE_SUFFIX >= '20260301'
 ),
 converted AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name IN ('sign_up_success', 'google_sign_in_success', 'apple_sign_in_success')
     AND _TABLE_SUFFIX >= '20260301'
 ),
@@ -362,7 +461,7 @@ upgraded AS (
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS upgrade_date,
     MAX(IF(ep.key = 'method', ep.value.string_value, NULL)) AS upgrade_method
-  FROM `automatica-v2.DATASET_ID.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_*`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'guest_upgrade'
     AND _TABLE_SUFFIX >= '20260301'
@@ -387,7 +486,7 @@ LEFT JOIN upgraded u ON g.user_pseudo_id = u.user_pseudo_id;
 -- ============================================================
 WITH enrolled_users AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'program_enroll'
     AND _TABLE_SUFFIX >= '20260301'
 ),
@@ -397,7 +496,7 @@ weekly_sessions AS (
     DATE_TRUNC(DATE(TIMESTAMP_MICROS(s.event_timestamp)), WEEK) AS week,
     COUNT(*) AS sessions_that_week
   FROM enrolled_users e
-  JOIN `automatica-v2.DATASET_ID.events_*` s ON e.user_pseudo_id = s.user_pseudo_id
+  JOIN `automatica-v2.analytics_517999677.events_*` s ON e.user_pseudo_id = s.user_pseudo_id
   WHERE s.event_name = 'training_session_complete'
     AND s._TABLE_SUFFIX >= '20260301'
   GROUP BY 1, 2
@@ -425,7 +524,7 @@ SELECT
   MAX(IF(ep.key = 'entry_point',  ep.value.string_value, NULL)) AS entry_point,
   COUNT(DISTINCT user_pseudo_id)                                 AS total_enrolls,
   MAX(IF(ep.key = 'program_id',   ep.value.int_value,    NULL)) AS program_id
-FROM `automatica-v2.DATASET_ID.events_*`,
+FROM `automatica-v2.analytics_517999677.events_*`,
 UNNEST(event_params) AS ep
 WHERE event_name = 'program_enroll'
   AND _TABLE_SUFFIX >= '20260301'
@@ -443,19 +542,24 @@ LIMIT 20;
 -- ============================================================
 WITH daily_installs AS (
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS installs
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'first_open' AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
 ),
 daily_enrolls AS (
+  -- Solo entry_point=onboarding: mide activación (North Star).
+  -- Catalog enrolls = engagement de usuarios ya activos, no cuentan aquí.
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS enrolls
-  FROM `automatica-v2.DATASET_ID.events_*`
-  WHERE event_name = 'program_enroll' AND _TABLE_SUFFIX >= '20260301'
+  FROM `automatica-v2.analytics_517999677.events_*`,
+  UNNEST(event_params) AS ep
+  WHERE event_name = 'program_enroll'
+    AND ep.key = 'entry_point' AND ep.value.string_value = 'onboarding'
+    AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
 ),
 daily_sessions AS (
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS active_trainers
-  FROM `automatica-v2.DATASET_ID.events_*`
+  FROM `automatica-v2.analytics_517999677.events_*`
   WHERE event_name = 'training_session_complete' AND _TABLE_SUFFIX >= '20260301'
   GROUP BY 1
 )
