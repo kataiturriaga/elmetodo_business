@@ -206,11 +206,3 @@ Día 1 — Fuerza + Conditioning
         └── Sled push — 25m
 ```
 
----
-
-## Resumen de prioridades para el dev
-
-1. **Backend primero:** crear modelo `RondaV2`, endpoints CRUD, y actualizar `BloqueV2Response`
-2. **Regenerar tipos TypeScript** en el dashboard tras los cambios de API (`npm run types:generate`)
-3. **Frontend:** añadir `RondaCard` en `TrainingDayEditor.tsx`, botón "+ Rondas" en `BloqueCard`, y servicios en `routine-v2-services.ts`
-4. **Reorden:** incluir rondas en el sistema de drag & drop del bloque
