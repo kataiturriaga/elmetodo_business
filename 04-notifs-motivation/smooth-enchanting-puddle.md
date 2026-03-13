@@ -18,10 +18,9 @@ antes de implementar nada en código.
 
 | ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
 |----|---------|--------|--------|-----------|--------|
-| `daily_reminder` | Usuario no ha abierto la app antes de las 18:00 | "Tu racha te espera 🔥" | "Llevas {N} días seguidos. Hoy falta poco para completar tu meta." | Todos | 18:00 local, solo si no hubo sesión |
-| `goal_reached_steps` | Usuario completa meta de pasos del día | "¡Meta conseguida! 🎯" | "Alcanzaste {N} pasos hoy. Tu racha sigue viva." | Todos | En el momento (servidor) |
-| `streak_at_risk` | Racha activa ≥ 3 días y faltan < 3h para medianoche sin meta cumplida | "Tu racha de {N} días en peligro ⚠️" | "Te faltan {X} pasos para mantenerla. ¡Tú puedes!" | Todos con racha ≥ 3 | ~21:00 local |
-| `streak_milestone` | Racha alcanza 7, 14, 30, 50, 100 días | "¡{N} días seguidos! 🏆" | "Eso es constancia de verdad. Eres de los mejores en elmetodo." | Todos | En el momento |
+| `goal_reached_steps` | Usuario completa meta de pasos del día | "¡Meta conseguida! 🎯" | "Alcanzaste 10.000 pasos hoy. Tu racha sigue viva." | Todos | En el momento (servidor) |
+| `streak_at_risk` | Racha activa ≥ 3 semanas y es jueves/viernes con < 3 sesiones completadas esa semana | "Tu racha de {N} semanas en peligro ⚠️" | "Te falta {X} sesión(es) para cerrar la semana. ¡Tú puedes!" | Todos con racha ≥ 3 semanas | Jueves/Viernes 19:00 local |
+| `streak_milestone` | Racha alcanza 4, 8, 13, 26, 52 semanas | "¡{N} semanas seguidas! 🏆" | "Eso es constancia de verdad. Eres de los mejores en elmetodo." | Todos | En el momento |
 
 ---
 
@@ -47,11 +46,11 @@ antes de implementar nada en código.
 
 | ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
 |----|---------|--------|--------|-----------|--------|
-| `training_reminder` | Usuario suscrito a programa, no ha hecho sesión del día y ya son las 17:00 | "Tu entrenamiento de hoy 🏋️" | "Tienes pendiente el día {N} de {Programa}. ¿Lo hacemos?" | Suscriptores con programa activo | 17:00 local |
+| `training_reminder` | Usuario suscrito a programa y lleva 3+ días sin completar ninguna sesión | "¿Seguimos con {Programa}? 🏋️" | "Llevas {X} días sin entrenar. Retómalo cuando puedas." | Suscriptores con programa activo | 10:00 local |
 | `training_day_done` | Usuario completa sesión de training | "Día {N} completado ✅" | "Semana {S} casi lista. Queda {X} sesión(es) esta semana." | Suscriptores | Inmediato post-completar |
 | `training_week_done` | Usuario completa todas las sesiones de la semana | "¡Semana {N} terminada! 🔥" | "{X}% del programa completado. Siguiente semana disponible." | Suscriptores | Inmediato |
 | `training_program_done` | Usuario completa el programa completo | "¡Programa completado! 🏆" | "Terminaste {Programa}. Ya tienes disponible tu siguiente reto." | Suscriptores | Inmediato |
-| `training_streak_broken` | Lleva 2+ días sin sesión habiendo tenido racha de entrenamiento ≥ 5 días | "Retoma tu ritmo 💪" | "Llevabas {N} días entrenando. Hoy es buen día para volver." | Suscriptores con racha previa | Mañana siguiente (08:00) |
+| `training_streak_broken` | No completó el objetivo de 3 sesiones la semana anterior habiendo tenido racha ≥ 3 semanas | "Retoma tu ritmo 💪" | "Llevabas {N} semanas cumpliendo tu meta. Esta semana puedes volver a hacerlo." | Suscriptores con racha previa | Lunes 08:00 |
 
 ---
 
@@ -80,8 +79,8 @@ antes de implementar nada en código.
 
 | | Título | Cuerpo |
 |---|---|---|
-| **A — emocional** | "¿Hoy contamos tus pasos?" | "Tu racha te está esperando. Aún tienes tiempo para sumar." |
-| **B — directo** | "Hoy falta tu registro" | "Abre la app para mantener tu racha de {N} días activa." |
+| **A — emocional** | "¿Hoy entrenamos?" | "Tu racha te está esperando. Aún tienes tiempo para sumar una sesión." |
+| **B — directo** | "Hoy falta tu sesión" | "Completa una sesión para seguir con tu racha de {N} semanas." |
 
 *Usar variante A si racha = 0. Variante B si racha ≥ 1.*
 
@@ -91,8 +90,8 @@ antes de implementar nada en código.
 
 | | Título | Cuerpo |
 |---|---|---|
-| **A — urgencia suave** | "Tu racha de {N} días, en peligro 🔥" | "Te faltan {X} pasos para hoy. Tienes hasta medianoche." |
-| **B — reto directo** | "{X} pasos para salvar {N} días" | "Hoy no rompas la racha. Ya estás tan cerca." |
+| **A — urgencia suave** | "Tu racha de {N} semanas, en peligro 🔥" | "Te falta {X} sesión(es) para cerrar la semana. Tienes hasta el domingo." |
+| **B — reto directo** | "{X} sesión(es) para salvar {N} semanas" | "Esta semana no rompas la racha. Ya estás tan cerca." |
 
 *Recomendado: B. Más accionable.*
 
@@ -102,11 +101,11 @@ antes de implementar nada en código.
 
 | Hito | Título | Cuerpo |
 |---|---|---|
-| 7 días | "Una semana sin parar 🔥" | "7 días seguidos. Estás entre el top de usuarios de elmetodo." |
-| 14 días | "Dos semanas de racha 💪" | "Lo que empezó como un hábito ya es parte de ti." |
-| 30 días | "Un mes sin fallar 🏆" | "30 días. Eso no lo hace casi nadie. Sigue." |
-| 50 días | "50 días. Eres constancia pura." | "Pocos llegan aquí. Tú ya eres uno de ellos." |
-| 100 días | "100 días. Leyenda 🥇" | "Tres meses sin parar. Elmetodo te saluda." |
+| 4 semanas (1 mes) | "Un mes cumpliendo tu meta 🔥" | "4 semanas seguidas. Estás entre el top de usuarios de elmetodo." |
+| 8 semanas (2 meses) | "Dos meses de racha 💪" | "Lo que empezó como un hábito ya es parte de ti." |
+| 13 semanas (3 meses) | "Un trimestre sin fallar 🏆" | "13 semanas. Eso no lo hace casi nadie. Sigue." |
+| 26 semanas (6 meses) | "Medio año. Eres constancia pura." | "Pocos llegan aquí. Tú ya eres uno de ellos." |
+| 52 semanas (1 año) | "Un año. Leyenda 🥇" | "52 semanas cumpliendo tu meta. Elmetodo te saluda." |
 
 ---
 
@@ -162,14 +161,14 @@ antes de implementar nada en código.
 
 ### ENTRENAMIENTO
 
-#### `training_reminder` — Recordatorio de sesión
+#### `training_reminder` — Recordatorio tras días sin sesión
 
 | | Título | Cuerpo |
 |---|---|---|
-| **A — personal** | "Tu entrenamiento de hoy 🏋️" | "Día {N} de {Programa} te está esperando. Son {T} minutos." |
-| **B — directo** | "Hoy toca entrenar" | "Tienes pendiente el día {N}. ¿Lo dejamos para mañana?" |
+| **A — sin culpa** | "¿Seguimos con {Programa}? 🏋️" | "Llevas {X} días sin entrenar. Retómalo cuando puedas." |
+| **B — directo** | "{X} días sin entrenar" | "El programa sigue donde lo dejaste. Cuando quieras, aquí está." |
 
-*Recomendado: B. El tono retador funciona en fitness.*
+*Recomendado: A. No asumimos que "hoy toca" — el usuario decide sus días.*
 
 ---
 
@@ -203,8 +202,8 @@ antes de implementar nada en código.
 
 | | Título | Cuerpo |
 |---|---|---|
-| **A — sin culpa** | "¿Volvemos a entrenar hoy?" | "Llevabas {N} días seguidos. Hoy es buen momento para retomarlo." |
-| **B — reto** | "El día {N} de {Programa} te espera" | "Dos días de pausa. Hoy es el mejor momento para volver." |
+| **A — sin culpa** | "¿Volvemos a entrenar esta semana?" | "Llevabas {N} semanas cumpliendo tu meta. Esta semana puedes retomarlo." |
+| **B — reto** | "El día {N} de {Programa} te espera" | "La semana pasada se escapó. Esta empieza hoy." |
 
 *Recomendado: A. Evita culpa, invita.*
 
@@ -285,6 +284,21 @@ antes de implementar nada en código.
 | `training_*` | Sesión de training del día |
 | `guest_register_nudge` | Pantalla de registro |
 | `trial_expiring_*`, `trial_expired` | Pantalla de suscripción (paywall) |
+
+---
+
+## User Properties requeridas (spec para Carles)
+
+| User Property | Tipo | Lógica | Cuándo actualizar |
+|---|---|---|---|
+| `current_streak_weeks` | Integer | Semanas consecutivas con ≥ 3 `training_session_complete` | Cada lunes, evaluando la semana lunes-domingo anterior |
+
+**Lógica de cálculo:**
+- Objetivo fijo: **3 sesiones por semana** para todos los usuarios (mínimo común de cualquier programa)
+- Cada lunes: ¿la semana pasada tuvo ≥ 3 `training_session_complete`? → `current_streak_weeks +1`; si no → `current_streak_weeks = 0`
+- Si el usuario no tiene historial, empieza en 0
+
+**Por qué no por días:** los usuarios eligen sus días de entreno libremente — no existe un objetivo de días concretos. La semana es la unidad natural de adherencia.
 
 ---
 
