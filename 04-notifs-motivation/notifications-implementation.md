@@ -2,6 +2,33 @@
 
 ---
 
+## Quién implementa cada notificación
+
+> **Firebase Console (tú)** = mensajes estáticos, sin variables dinámicas por usuario.
+> **Código — Carles** = mensajes personalizados con datos del usuario, in-app modals, y cualquier lógica condicional compleja.
+
+| Notificación | Tipo | ¿Quién? | Motivo |
+|---|---|---|---|
+| `daily_reminder` | Push | ✅ Firebase Console | Mensaje genérico, sin variables de usuario |
+| `weekly_results` | Push | ✅ Firebase Console (versión genérica) | El copy con `#{P}` posición requiere Carles |
+| `trial_expiring_3d` | Push | ✅ Firebase Console | No necesita datos personalizados |
+| `trial_expiring_1d` | Push | ✅ Firebase Console | No necesita datos personalizados |
+| `trial_expired` | Push | ✅ Firebase Console | No necesita datos personalizados |
+| `guest_register_nudge` | Push | ⚠️ Firebase Console (versión genérica) | El `{N} días activo` requiere Carles |
+| `streak_at_risk` | Push | ❌ Carles | Necesita `{N}` semanas y `{X}` sesiones por usuario |
+| `streak_milestone` | In-app modal | ❌ Carles | Necesita detectar el hito exacto de cada usuario |
+| `ranking_promotion` | Push | ❌ Carles | Necesita `{NuevoGrupo}` por usuario |
+| `ranking_relegation` | Push | ❌ Carles | Necesita `{NuevoGrupo}` por usuario |
+| `ranking_top3` | In-app modal | ❌ Carles | Requiere datos de ranking en tiempo real |
+| `mid_week_nudge` | Push | ❌ Carles | Necesita `{N}` pasos y `{X}` diferencia por usuario |
+| `training_reminder` | Push | ❌ Carles | Necesita `{X}` días sin sesión y `{Programa}` por usuario |
+| `training_day_done` | In-app banner | ❌ Carles | Se dispara dentro de la app al completar sesión |
+| `training_week_done` | In-app modal | ❌ Carles | Se dispara dentro de la app, necesita % del programa |
+| `training_program_done` | In-app modal | ❌ Carles | Se dispara dentro de la app al completar programa |
+| `training_streak_broken` | Push | ❌ Carles | Necesita `{N}` semanas de racha por usuario |
+
+---
+
 ## Fase 1 — Push notifications básicas
 
 ### Tu parte (sin código)
