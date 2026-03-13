@@ -9,11 +9,10 @@
 
 | Notificación | Tipo | ¿Quién? | Motivo |
 |---|---|---|---|
-| `daily_reminder` | Push | ✅ Firebase Console | Mensaje genérico, sin variables de usuario |
-| `weekly_results` | Push | ✅ Firebase Console (versión genérica) | El copy con `#{P}` posición requiere Carles |
-| `trial_expiring_3d` | Push | ✅ Firebase Console | No necesita datos personalizados |
-| `trial_expiring_1d` | Push | ✅ Firebase Console | No necesita datos personalizados |
-| `trial_expired` | Push | ✅ Firebase Console | No necesita datos personalizados |
+| `weekly_results` | Push | ❌ Carles | Necesita `#{P}` posición en ranking por usuario |
+| `trial_expiring_3d` | Push | ❌ Carles | Audiencia requiere cruzar estado de trial + días sin actividad |
+| `trial_expiring_1d` | Push | ❌ Carles | Audiencia requiere cruzar estado de trial + días sin actividad |
+| `trial_expired` | Push | ❌ Carles | Requiere detectar expiración de trial por usuario |
 | `guest_register_nudge` | Push | ⚠️ Firebase Console (versión genérica) | El `{N} días activo` requiere Carles |
 | `streak_at_risk` | Push | ❌ Carles | Necesita `{N}` semanas y `{X}` sesiones por usuario |
 | `streak_milestone` | In-app modal | ❌ Carles | Necesita detectar el hito exacto de cada usuario |

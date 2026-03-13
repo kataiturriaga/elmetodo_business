@@ -19,7 +19,7 @@ antes de implementar nada en código.
 | ID | Trigger | Título | Cuerpo | Audiencia | Cuándo | Dónde |
 |----|---------|--------|--------|-----------|--------|-------|
 | `goal_reached_steps` | Usuario completa meta de pasos del día | "¡Meta conseguida! 🎯" | "Alcanzaste 10.000 pasos hoy. Tu racha sigue viva." | Todos | En el momento (servidor) | Push |
-| `streak_at_risk` | Racha activa ≥ 3 semanas y es jueves/viernes con < 3 sesiones completadas esa semana | "Tu racha de entrenos de {N} semanas en peligro ⚠️" | "Te falta {X} sesión(es) para cerrar la semana. ¡Tú puedes!" | Todos con racha ≥ 3 semanas | Jueves/Viernes 19:00 local | Push |
+| `streak_at_risk` | Racha activa ≥ 3 semanas y es jueves/viernes con < 3 sesiones completadas esa semana | "{X} sesión(es) para salvar {N} semanas" | "Esta semana no rompas la racha. Ya estás tan cerca." | Todos con racha ≥ 3 semanas | Jueves/Viernes 19:00 local | Push |
 | `streak_milestone` | Racha de entrenos alcanza 2, 4, 8, 13, 26, 52 semanas | "¡{N} semanas seguidas! 🏆" | "Eso es constancia de verdad. Eres de los mejores en elmetodo." | Todos | En el momento | In-app (modal) |
 
 > explicación de racha de entrenos (current_streak_weeks) abajo
@@ -73,19 +73,7 @@ antes de implementar nada en código.
 > Variables dinámicas entre `{llaves}`.
 
 ---
-
-### ACTIVIDAD DIARIA
-
-#### `daily_reminder` — Recordatorio si no has abierto la app
-
-| | Título | Cuerpo |
-|---|---|---|
-| **A — emocional** | "¿Hoy entrenamos?" | "Tu racha te está esperando. Aún tienes tiempo para sumar una sesión." |
-| **B — directo** | "Hoy falta tu sesión" | "Completa una sesión para seguir con tu racha de {N} semanas." |
-
-*Usar variante A si racha = 0. Variante B si racha ≥ 1.*
-
----
+> me he quedado aqui
 
 #### `streak_at_risk` — Racha en peligro
 
