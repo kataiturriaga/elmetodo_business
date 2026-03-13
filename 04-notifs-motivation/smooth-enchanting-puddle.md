@@ -16,23 +16,23 @@ antes de implementar nada en código.
 
 ### 1. ACTIVIDAD DIARIA (Retención)
 
-| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
-|----|---------|--------|--------|-----------|--------|
-| `goal_reached_steps` | Usuario completa meta de pasos del día | "¡Meta conseguida! 🎯" | "Alcanzaste 10.000 pasos hoy. Tu racha sigue viva." | Todos | En el momento (servidor) |
-| `streak_at_risk` | Racha activa ≥ 3 semanas y es jueves/viernes con < 3 sesiones completadas esa semana | "Tu racha de {N} semanas en peligro ⚠️" | "Te falta {X} sesión(es) para cerrar la semana. ¡Tú puedes!" | Todos con racha ≥ 3 semanas | Jueves/Viernes 19:00 local |
-| `streak_milestone` | Racha alcanza 4, 8, 13, 26, 52 semanas | "¡{N} semanas seguidas! 🏆" | "Eso es constancia de verdad. Eres de los mejores en elmetodo." | Todos | En el momento |
+| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo | Dónde |
+|----|---------|--------|--------|-----------|--------|-------|
+| `goal_reached_steps` | Usuario completa meta de pasos del día | "¡Meta conseguida! 🎯" | "Alcanzaste 10.000 pasos hoy. Tu racha sigue viva." | Todos | En el momento (servidor) | Push |
+| `streak_at_risk` | Racha activa ≥ 3 semanas y es jueves/viernes con < 3 sesiones completadas esa semana | "Tu racha de {N} semanas en peligro ⚠️" | "Te falta {X} sesión(es) para cerrar la semana. ¡Tú puedes!" | Todos con racha ≥ 3 semanas | Jueves/Viernes 19:00 local | Push |
+| `streak_milestone` | Racha alcanza 4, 8, 13, 26, 52 semanas | "¡{N} semanas seguidas! 🏆" | "Eso es constancia de verdad. Eres de los mejores en elmetodo." | Todos | En el momento | In-app (modal) |
 
 ---
 
 ### 2. RANKING SEMANAL (Engagement social)
 
-| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
-|----|---------|--------|--------|-----------|--------|
-| `weekly_results` | Fin de semana de ranking (domingo noche / lunes mañana) | "Los resultados de esta semana 📊" | "Quedaste #{P} en tu grupo. {Mensaje según resultado}" | Registrados | Lunes 08:00 local |
-| `ranking_promotion` | Usuario sube de grupo (relegation/promotion calculado al cerrar semana) | "¡Subiste de grupo! 🚀" | "Pasas al grupo {NuevoGrupo}. Esta semana a por más." | Registrados | Lunes 08:00 (junto con weekly_results) |
-| `ranking_relegation` | Usuario baja de grupo | "Esta semana nos toca remontar 💪" | "Bajaste al grupo {NuevoGrupo}. Tienes todo para volver." | Registrados | Lunes 08:00 (junto con weekly_results) |
-| `ranking_top3` | Usuario entra en top 3 de su grupo en algún momento de la semana | "¡Estás en el podio! 🥇" | "Eres #{P} en el grupo {Grupo}. No sueltes el ritmo." | Registrados | En el momento (si baja de posición) |
-| `mid_week_nudge` | Miércoles, usuario está fuera del top 10 pero a <20% de pasos del #10 | "Cerca del top 10 📈" | "Llevas {N} pasos. Con un poco más entras en el top." | Registrados con ranking activo | Miércoles 10:00 local |
+| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo | Dónde |
+|----|---------|--------|--------|-----------|--------|-------|
+| `weekly_results` | Fin de semana de ranking (domingo noche / lunes mañana) | "Los resultados de esta semana 📊" | "Quedaste #{P} en tu grupo. {Mensaje según resultado}" | Registrados con ranking activo | Lunes 08:00 local | Push |
+| `ranking_promotion` | Usuario sube de grupo (relegation/promotion calculado al cerrar semana) | "¡Subiste de grupo! 🚀" | "Pasas al grupo {NuevoGrupo}. Esta semana a por más." | Registrados con ranking activo | Lunes 08:00 (junto con weekly_results) | Push |
+| `ranking_relegation` | Usuario baja de grupo | "Esta semana nos toca remontar 💪" | "Bajaste al grupo {NuevoGrupo}. Tienes todo para volver." | Registrados con ranking activo | Lunes 08:00 (junto con weekly_results) | Push |
+| `ranking_top3` | Usuario entra en top 3 de su grupo en algún momento de la semana | "¡Estás en el podio! 🥇" | "Eres #{P} en el grupo {Grupo}. No sueltes el ritmo." | Registrados con ranking activo | En el momento | In-app (modal) |
+| `mid_week_nudge` | Miércoles, usuario está fuera del top 10 pero a <20% de pasos del #10 | "Cerca del top 10 📈" | "Llevas {N} pasos. Con un poco más entras en el top." | Registrados con ranking activo | Miércoles 10:00 local | Push |
 
 **Copias para weekly_results según posición:**
 - Top 3: "¡Increíble semana! Eres uno de los más activos del grupo."
@@ -44,24 +44,24 @@ antes de implementar nada en código.
 
 ### 3. ENTRENAMIENTO (Adherencia)
 
-| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
-|----|---------|--------|--------|-----------|--------|
-| `training_reminder` | Usuario suscrito a programa y lleva 3+ días sin completar ninguna sesión | "¿Seguimos con {Programa}? 🏋️" | "Llevas {X} días sin entrenar. Retómalo cuando puedas." | Suscriptores con programa activo | 10:00 local |
-| `training_day_done` | Usuario completa sesión de training | "Día {N} completado ✅" | "Semana {S} casi lista. Queda {X} sesión(es) esta semana." | Suscriptores | Inmediato post-completar |
-| `training_week_done` | Usuario completa todas las sesiones de la semana | "¡Semana {N} terminada! 🔥" | "{X}% del programa completado. Siguiente semana disponible." | Suscriptores | Inmediato |
-| `training_program_done` | Usuario completa el programa completo | "¡Programa completado! 🏆" | "Terminaste {Programa}. Ya tienes disponible tu siguiente reto." | Suscriptores | Inmediato |
-| `training_streak_broken` | No completó el objetivo de 3 sesiones la semana anterior habiendo tenido racha ≥ 3 semanas | "Retoma tu ritmo 💪" | "Llevabas {N} semanas cumpliendo tu meta. Esta semana puedes volver a hacerlo." | Suscriptores con racha previa | Lunes 08:00 |
+| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo | Dónde |
+|----|---------|--------|--------|-----------|--------|-------|
+| `training_reminder` | Usuario suscrito a programa y lleva 3+ días sin completar ninguna sesión | "¿Seguimos con {Programa}? 🏋️" | "Llevas {X} días sin entrenar. Retómalo cuando puedas." | Usuarios con cualquier programa activo | 10:00 local | Push |
+| `training_day_done` | Usuario completa una sesión de training | "Día {N} completado ✅" | "Semana {S} casi lista. Queda {X} sesión(es) esta semana." | Usuarios con programa activo | Inmediato | In-app (banner) |
+| `training_week_done` | Usuario completa ≥ 3 sesiones en la semana | "¡Semana {N} terminada! 🔥" | "{X}% del programa completado. Siguiente semana disponible." | Usuarios con programa activo | Inmediato | In-app (modal) |
+| `training_program_done` | Usuario completa el programa completo | "¡{Programa} completado! 🏆" | "Lo terminaste. Tu siguiente reto ya está disponible." | Usuarios con programa activo | Inmediato | In-app (modal) |
+| `training_streak_broken` | No completó el objetivo de 3 sesiones la semana anterior habiendo tenido racha ≥ 3 semanas | "Retoma tu ritmo 💪" | "Llevabas {N} semanas cumpliendo tu meta. Esta semana puedes volver a hacerlo." | Suscriptores con racha previa | Lunes 08:00 | Push |
 
 ---
 
 ### 4. CONVERSIÓN (Guest → Registro → Suscripción)
 
-| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo |
-|----|---------|--------|--------|-----------|--------|
-| `guest_register_nudge` | Guest activo ≥ 7 días con buena actividad (racha ≥ 3 o ranking top 30%) | "Guarda tu progreso 🔐" | "Llevas {N} días activo. Crea una cuenta para no perder tu historial." | Guests activos | Día 7 o 14 de actividad |
-| `trial_expiring_3d` | Trial expira en 3 días | "Tu acceso completo termina en 3 días" | "Tienes 3 días para suscribirte y no perder tus entrenamientos." | Trial activo | 3 días antes |
-| `trial_expiring_1d` | Trial expira mañana | "Último día de acceso completo ⏳" | "Mañana termina tu trial. Suscríbete hoy y sigue sin interrupciones." | Trial activo | 1 día antes |
-| `trial_expired` | Trial acaba de expirar | "Tu trial ha finalizado" | "Puedes seguir con pasos y ranking. Suscríbete para acceder al entrenamiento." | Trial expirado (zona1Blocked) | Día de expiración |
+| ID | Trigger | Título | Cuerpo | Audiencia | Cuándo | Dónde |
+|----|---------|--------|--------|-----------|--------|-------|
+| `guest_register_nudge` | Guest activo ≥ 7 días con buena actividad (racha ≥ 3 o ranking top 30%) | "Guarda tu progreso 🔐" | "Llevas {N} días activo. Crea una cuenta para no perder tu historial." | Guests activos | Día 7 o 14 de actividad | Push |
+| `trial_expiring_3d` | Trial expira en 3 días | "Tu acceso completo termina en 3 días" | "Tienes 3 días para suscribirte y no perder tus entrenamientos." | Trial activo | 3 días antes | Push |
+| `trial_expiring_1d` | Trial expira mañana | "Último día de acceso completo ⏳" | "Mañana termina tu trial. Suscríbete hoy y sigue sin interrupciones." | Trial activo | 1 día antes | Push |
+| `trial_expired` | Trial acaba de expirar | "Tu trial ha finalizado" | "Puedes seguir con pasos y ranking. Suscríbete para acceder al entrenamiento." | Trial expirado (zona1Blocked) | Día de expiración | Push |
 
 ---
 
@@ -308,3 +308,11 @@ antes de implementar nada en código.
 - ¿Hay preferencia de idioma/localización? (la app parece ser en español exclusivamente)
 - ¿Se quiere A/B testing en copy desde el principio?
 - ¿El ranking se cierra un día específico? (afecta timing de weekly_results)
+
+
+
+> seccion de descartados de momento
+
+| `training_day_done` | Usuario completa sesión de training | "Día {N} completado ✅" | "Semana {S} casi lista. Queda {X} sesión(es) esta semana." | Suscriptores | Inmediato post-completar |
+
+ahora mismo enseñamos la TrainingCompleted screen . puede que ademas queramos añadir un modal despues de esa sesion recordando cuantas sesiones le quedan esa semana.
