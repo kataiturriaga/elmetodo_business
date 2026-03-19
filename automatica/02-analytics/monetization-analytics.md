@@ -119,6 +119,7 @@ Estas properties son **críticas** para segmentar. `subscription_status` estaba 
 | 3 | **Programa Base Semana 3** | `base_program_end_date` en próximos 7 días | Push D+21: "Te queda 1 semana" (según `notifs-feb.md`) |
 | 4 | **Bloqueados Post-4-Semanas** | `subscription_status = free` + `base_expiry_locked_view` | Push de reenganche: "Tu progreso sigue ahí" |
 | 5 | **Sorteo Cohort** | `first_open` durante periodo de sorteo | Medir la cohorte de adquisición del sorteo vs orgánico |
+| 6 | **Churned Subscribers** | `subscription_status = cancelled` | Secuencia de recuperación: push D0, D+3, D+30 y email D+90 (ver notifs spec, sección 5) |
 
 ---
 

@@ -32,13 +32,15 @@ PUNTOS DE FRICCIÓN
 ```
 
 **Métricas de este journey**:
+
 - **Install → First session**: D0 (meta: >90%)
 - **Session → Health permission granted**: (meta: >60%)
 - **D1 retention**: (meta: >40%)
 
 **Optimizaciones pendientes**:
-- [ ] A/B test: ¿mostrar el ranking en el onboarding aumenta D1 retention?
-- [ ] Push de bienvenida a las 24h: "Tus primeros pasos están contados."
+
+- A/B test: ¿mostrar el ranking en el onboarding aumenta D1 retention?
+- Push de bienvenida a las 24h: "Tus primeros pasos están contados."
 
 ---
 
@@ -70,15 +72,17 @@ PUNTOS DE FRICCIÓN
 ```
 
 **Métricas de este journey**:
+
 - **Free → Trial activation**: (meta: >30% de usuarios registrados)
 - **Trial day 1 → Day 3 completion**: (meta: >50%)
 - **Trial expiry → Purchase**: (meta: >25%)
 - **Plan mix**: Meta → 60% trimestral, 30% anual, 10% mensual
 
 **Optimizaciones pendientes**:
-- [ ] Push a D7 del trial: "Te quedan 7 días para terminar el programa"
-- [ ] Push a D12: "2 días para tu trial. No pierdas tu progreso."
-- [ ] A/B test: Mostrar "días completados" en el paywall vs solo precio
+
+- Push a D7 del trial: "Te quedan 7 días para terminar el programa"
+- Push a D12: "2 días para tu trial. No pierdas tu progreso."
+- A/B test: Mostrar "días completados" en el paywall vs solo precio
 
 ---
 
@@ -109,16 +113,18 @@ MITIGACIONES
 ```
 
 **Métricas de este journey**:
+
 - **M1 retention** (30 días): (meta: >70%)
 - **Program completion rate**: (meta: >40% completan programa base)
 - **Base → Completo upgrade**: (meta: >50% de quienes completan base)
 - **M3 renewal** (trimestral): (meta: >65%)
 
 **Optimizaciones pendientes**:
-- [ ] Badge de "Programa completado" — gamificación de hitos
-- [ ] "Plan de continuación" automático al terminar programa → no hay gap
-- [ ] Notificación semanal de progreso con comparativa vs semana anterior
-- [ ] Re-engagement push si no hay sesión en 5 días: "Tu progreso te espera"
+
+- Badge de "Programa completado" — gamificación de hitos
+- "Plan de continuación" automático al terminar programa → no hay gap
+- Notificación semanal de progreso con comparativa vs semana anterior
+- Re-engagement push si no hay sesión en 5 días: "Tu progreso te espera"
 
 ---
 
@@ -133,10 +139,8 @@ TRIGGER: Suscriptor cancela renovación automática
          │
          ├─ D+3: "Tu acceso sigue activo hasta el [fecha]"
          │
-         ├─ D+7 (si quedan 7 días de acceso): "Esta semana es gratis, úsala"
-         │
          ├─ D+0 (día de expiración): Email + push — oferta de re-suscripción
-         │        Posible: descuento de retención (primer mes -30%)
+         │        Descuento de retención: pendiente de definir con Carles
          │
          ├─ D+30 (inactivo 1 mes): "Te echamos de menos. Tu progreso te espera."
          │
@@ -144,6 +148,7 @@ TRIGGER: Suscriptor cancela renovación automática
 ```
 
 **Métricas de este journey**:
+
 - **Cancellation rate**: Por tier (monthly tiene más churn)
 - **Win-back rate**: % de churned que re-suscriben en 90 días (meta: >15%)
 - **Reactivation rate desde push/email**
@@ -152,14 +157,15 @@ TRIGGER: Suscriptor cancela renovación automática
 
 ## Resumen de momentos críticos (Make or Break)
 
-| Momento | Qué decide | Señal de alarma |
-|---------|-----------|-----------------|
-| D0: Primer uso sin registro | Dar permiso de salud | Permission denied >40% |
-| D1: Abrir ranking | Volver mañana | D1 retention <30% |
-| D3-D7 del trial | Compromiso con el programa | <3 sesiones en D7 = churn |
-| D14: Paywall | Comprar o abandonar | Conversion <15% |
-| D28-D30: Fin del programa base | ¿Hay siguiente paso? | Churn post-programa >40% |
-| M3: Renovación trimestral | ¿Renueva anual? | Downgrade o cancel |
-| Post-coached upgrade | ¿Se queda a largo plazo? | NPS Coached <8 |
+
+| Momento                        | Qué decide                 | Señal de alarma           |
+| ------------------------------ | -------------------------- | ------------------------- |
+| D0: Primer uso sin registro    | Dar permiso de salud       | Permission denied >40%    |
+| D1: Abrir ranking              | Volver mañana              | D1 retention <30%         |
+| D3-D7 del trial                | Compromiso con el programa | <3 sesiones en D7 = churn |
+| D14: Paywall                   | Comprar o abandonar        | Conversion <15%           |
+| D28-D30: Fin del programa base | ¿Hay siguiente paso?       | Churn post-programa >40%  |
+| M3: Renovación trimestral      | ¿Renueva anual?            | Downgrade o cancel        |
+| Post-coached upgrade           | ¿Se queda a largo plazo?   | NPS Coached <8            |
 
 
