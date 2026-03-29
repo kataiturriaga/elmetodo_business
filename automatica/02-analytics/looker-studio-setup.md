@@ -28,18 +28,23 @@ Para cada una:
 
 > he metido hasta habit formation >
 
-| Nombre en Looker Studio | Query del archivo SQL |
-|-------------------------|-----------------------|
-| `KPI - Daily Installs` | Query #1 |
-| `KPI - Light Activation` | Query #2 |
-| `KPI - Base Enroll Rate` | Query #3 |
-| `KPI - Habit Formation` | Query #4 |
-| `KPI - Retention D1/D7/D30` | Query #7 |
-| `KPI - Time to First Workout` | Query #8 |
-| `KPI - Guest Conversion` | Query #9 |
-| `KPI - Weekly Sessions` | Query #10 |
-| `KPI - Top Programs` | Query #11 |
-| `SUMMARY - Daily KPIs` | Query Bonus Resumen |
+| Nombre en Looker Studio | Query del archivo SQL | Estado |
+|-------------------------|-----------------------|--------|
+| `KPI - Daily Installs` | Query #1 | ✅ |
+| `KPI - Light Activation` | Query #2 | ✅ |
+| `KPI - Base Enroll Rate` | Query #3 | ✅ |
+| `KPI - Habit Formation` | Query #4 | ✅ |
+| `KPI - Trial Start Rate` | Query #5 | pendiente |
+| `KPI - Trial to Paid` | Query #6 | pendiente |
+| `KPI - Retention D1/D7/D30` | Query #7 | pendiente |
+| `KPI - Time to First Workout` | Query #8 | pendiente |
+| `KPI - Guest Conversion` | Query #9 | pendiente |
+| `KPI - Weekly Sessions` | Query #10 | pendiente |
+| `KPI - Top Programs` | Query #11 | pendiente |
+| `MON - Paywall Funnel` | Query #12 | pendiente |
+| `MON - Paywall by Entry Point` | Query #13 | pendiente |
+| `MON - Daily Monetization` | Query #14 | pendiente |
+| `SUMMARY - Daily KPIs` | Query Bonus Resumen | pendiente |
 
 ---
 
@@ -126,6 +131,34 @@ first_open → training_onboarding_continue → program_start_intent
 - `total_guests`
 - `guest_conversion_rate_pct`
 - Breakdown: `via_google`, `via_apple`, `via_email`
+
+---
+
+### Página 5: Monetización
+
+**Fila 1 — Scorecards**
+- `purchases` — fuente: MON - Daily Monetization
+- `trial_starts` — fuente: MON - Daily Monetization
+- `conversion_paywall_pct` — fuente: MON - Daily Monetization (objetivo 15%)
+- `trial_to_paid_rate_pct` — fuente: KPI - Trial to Paid (objetivo 50%)
+
+**Fila 2 — Funnel del paywall (Bar Chart horizontal)**
+- Fuente: MON - Paywall Funnel
+- Dimensión: `event_name`
+- Métrica: `unique_users`
+- Ordena: `unique_users` DESC
+- Muestra el drop en cada paso: paywall_viewed → purchase_started → purchase_completed
+
+**Fila 3 — Entry points (Pie Chart)**
+- Fuente: MON - Paywall by Entry Point
+- Dimensión: `entry_point`
+- Métrica: `paywall_views`
+- Sirve para saber desde dónde llegan los usuarios al paywall
+
+**Fila 4 — Serie temporal**
+- Fuente: MON - Daily Monetization
+- Dimensión: `date`
+- Métricas: `paywall_views`, `purchases`, `trial_starts`
 
 ---
 

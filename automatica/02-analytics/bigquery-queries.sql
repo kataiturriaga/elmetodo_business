@@ -262,10 +262,9 @@ ORDER BY 1 DESC;
 
 
 -- ============================================================
--- 5. TRIAL START RATE (por hacer)
+-- 5. TRIAL START RATE
 -- Métrica: % de installs que hacen trial_started (en cualquier momento)
 -- Objetivo: ≥20%
--- NOTA: Cuando implementes monetización, el evento será trial_started
 -- ============================================================
 WITH installs AS (
   SELECT
@@ -279,7 +278,7 @@ WITH installs AS (
 trials AS (
   SELECT DISTINCT user_pseudo_id
   FROM `automatica-v2.analytics_517999677.events_*`
-  WHERE event_name = 'trial_started'  -- ajustar cuando esté implementado
+  WHERE event_name = 'trial_started'
     AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
 )
 SELECT
@@ -298,10 +297,9 @@ ORDER BY 1 DESC;
 
 
 -- ============================================================
--- 6. TRIAL → PAID CONVERSION  ← FOCO PRINCIPAL NEGOCIO (por hacer)
--- Métrica: % de trial_started que pasan a subscription_started
+-- 6. TRIAL → PAID CONVERSION  ← FOCO PRINCIPAL NEGOCIO
+-- Métrica: % de trial_started que pasan a purchase_completed
 -- Objetivo: ≥50%
--- NOTA: Cuando implementes monetización, los eventos serán trial_started / subscription_started
 -- ============================================================
 WITH trials AS (
   SELECT
@@ -313,9 +311,16 @@ WITH trials AS (
   GROUP BY 1
 ),
 conversions AS (
-  SELECT DISTINCT user_pseudo_id
+  SELECT
+    user_pseudo_id,
+    (
+      SELECT ep.value.string_value
+      FROM UNNEST(event_params) ep
+      WHERE ep.key = 'tier'
+      LIMIT 1
+    ) AS tier
   FROM `automatica-v2.analytics_517999677.events_*`
-  WHERE event_name = 'subscription_started'
+  WHERE event_name = 'purchase_completed'
     AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
 )
 SELECT
@@ -326,9 +331,127 @@ SELECT
     COUNT(DISTINCT c.user_pseudo_id) / NULLIF(COUNT(DISTINCT t.user_pseudo_id), 0) * 100,
     1
   )                                  AS trial_to_paid_rate_pct,
+  -- Breakdown por tier (monthly / quarterly / yearly)
+  COUNT(DISTINCT IF(c.tier = 'monthly',   c.user_pseudo_id, NULL)) AS tier_monthly,
+  COUNT(DISTINCT IF(c.tier = 'quarterly', c.user_pseudo_id, NULL)) AS tier_quarterly,
+  COUNT(DISTINCT IF(c.tier = 'yearly',    c.user_pseudo_id, NULL)) AS tier_yearly,
   50.0                               AS objetivo_pct
 FROM trials t
 LEFT JOIN conversions c ON t.user_pseudo_id = c.user_pseudo_id
+GROUP BY 1
+ORDER BY 1 DESC;
+
+
+-- ============================================================
+-- 12. FUNNEL DE MONETIZACIÓN (paywall → compra)
+-- Muestra dónde se caen los usuarios en el flujo de pago.
+-- ============================================================
+WITH funnel AS (
+  SELECT
+    user_pseudo_id,
+    event_name,
+    DATE(TIMESTAMP_MICROS(event_timestamp)) AS event_date
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name IN (
+    'paywall_viewed',
+    'purchase_started',
+    'purchase_completed',
+    'purchase_cancelled',
+    'purchase_failed'
+  )
+  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+),
+step_counts AS (
+  SELECT
+    event_name,
+    COUNT(DISTINCT user_pseudo_id) AS unique_users
+  FROM funnel
+  GROUP BY 1
+)
+SELECT
+  event_name,
+  unique_users,
+  ROUND(
+    unique_users / (SELECT unique_users FROM step_counts WHERE event_name = 'paywall_viewed') * 100,
+    1
+  ) AS pct_of_paywall_views
+FROM step_counts
+ORDER BY unique_users DESC;
+
+
+-- ============================================================
+-- 13. PAYWALL POR ENTRY POINT
+-- ¿Desde dónde llegan los usuarios al paywall?
+-- Sirve para priorizar dónde colocar los CTAs de suscripción.
+-- entry_points: base_program | catalog | trial_expired | explore | banner | next_level
+-- ============================================================
+SELECT
+  (
+    SELECT ep.value.string_value
+    FROM UNNEST(event_params) ep
+    WHERE ep.key = 'entry_point'
+    LIMIT 1
+  ) AS entry_point,
+  COUNT(DISTINCT user_pseudo_id) AS paywall_views,
+  ROUND(
+    COUNT(DISTINCT user_pseudo_id) /
+    (
+      SELECT COUNT(DISTINCT user_pseudo_id)
+      FROM `automatica-v2.analytics_517999677.events_*`
+      WHERE event_name = 'paywall_viewed'
+        AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    ) * 100,
+    1
+  ) AS pct_of_total
+FROM `automatica-v2.analytics_517999677.events_*`
+WHERE event_name = 'paywall_viewed'
+  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+GROUP BY 1
+ORDER BY paywall_views DESC;
+
+
+-- ============================================================
+-- 14. RESUMEN DIARIO MONETIZACIÓN
+-- Tabla base para el dashboard de monetización.
+-- Una fila por día con todos los eventos clave.
+-- ============================================================
+WITH daily AS (
+  SELECT
+    DATE(TIMESTAMP_MICROS(event_timestamp)) AS date,
+    event_name,
+    user_pseudo_id
+  FROM `automatica-v2.analytics_517999677.events_*`
+  WHERE event_name IN (
+    'paywall_viewed', 'purchase_started', 'purchase_completed',
+    'purchase_cancelled', 'purchase_failed',
+    'trial_started', 'trial_ended',
+    'base_expiry_warning_shown', 'base_expiry_locked_view'
+  )
+  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+)
+SELECT
+  date,
+  COUNT(DISTINCT IF(event_name = 'paywall_viewed',          user_pseudo_id, NULL)) AS paywall_views,
+  COUNT(DISTINCT IF(event_name = 'purchase_started',        user_pseudo_id, NULL)) AS purchase_starts,
+  COUNT(DISTINCT IF(event_name = 'purchase_completed',      user_pseudo_id, NULL)) AS purchases,
+  COUNT(DISTINCT IF(event_name = 'purchase_cancelled',      user_pseudo_id, NULL)) AS cancellations,
+  COUNT(DISTINCT IF(event_name = 'purchase_failed',         user_pseudo_id, NULL)) AS failures,
+  COUNT(DISTINCT IF(event_name = 'trial_started',           user_pseudo_id, NULL)) AS trial_starts,
+  COUNT(DISTINCT IF(event_name = 'trial_ended',             user_pseudo_id, NULL)) AS trial_ends,
+  COUNT(DISTINCT IF(event_name = 'base_expiry_warning_shown', user_pseudo_id, NULL)) AS expiry_warnings,
+  COUNT(DISTINCT IF(event_name = 'base_expiry_locked_view', user_pseudo_id, NULL)) AS locked_views,
+  -- Tasas clave
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'purchase_started',   user_pseudo_id, NULL)) /
+    NULLIF(COUNT(DISTINCT IF(event_name = 'paywall_viewed', user_pseudo_id, NULL)), 0) * 100,
+    1
+  ) AS ctr_paywall_pct,
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'purchase_completed', user_pseudo_id, NULL)) /
+    NULLIF(COUNT(DISTINCT IF(event_name = 'paywall_viewed', user_pseudo_id, NULL)), 0) * 100,
+    1
+  ) AS conversion_paywall_pct
+FROM daily
 GROUP BY 1
 ORDER BY 1 DESC;
 
