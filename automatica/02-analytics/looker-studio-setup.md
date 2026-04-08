@@ -30,21 +30,22 @@ Para cada una:
 
 | Nombre en Looker Studio | Query del archivo SQL | Estado |
 |-------------------------|-----------------------|--------|
-| `KPI - Daily Installs` | Query #1 | ✅ |
-| `KPI - Light Activation` | Query #2 | ✅ |
-| `KPI - Base Enroll Rate` | Query #3 | ✅ |
-| `KPI - Habit Formation` | Query #4 | ✅ |
-| `KPI - Trial Start Rate` | Query #5 | pendiente |
-| `KPI - Trial to Paid` | Query #6 | pendiente |
-| `KPI - Retention D1/D7/D30` | Query #7 | pendiente |
-| `KPI - Time to First Workout` | Query #8 | pendiente |
-| `KPI - Guest Conversion` | Query #9 | pendiente |
-| `KPI - Weekly Sessions` | Query #10 | pendiente |
-| `KPI - Top Programs` | Query #11 | pendiente |
-| `MON - Paywall Funnel` | Query #12 | pendiente |
-| `MON - Paywall by Entry Point` | Query #13 | pendiente |
-| `MON - Daily Monetization` | Query #14 | pendiente |
-| `SUMMARY - Daily KPIs` | Query Bonus Resumen | pendiente |
+| `Daily Installs` | Query #1 | ✅ |
+| `Light Activation` | Query #2 | ✅ |
+| `Base enroll rate` | Query #3 | ✅ |
+| `Habit formation` | Query #4 | ✅ |
+| `KPI - Trial Start Rate` | Query #5 | ✅ |
+| `KPI - Trial to Paid` | Query #6 | ✅ |
+| `RETENCIÓN D1 / D7 / D30` | Query #7 | ✅ |
+| `Time to first workout` | Query #8 | ✅ |
+| `GUEST- ACCOUNT CONVERSION` | Query #9 | ✅ |
+| `SESIONES POR SEMANA POR USUARIO ENROLLADO` | Query #10 | ✅ |
+| `TOP PROGRAMAS POR ENROLLMENT` | Query #11 | ✅ |
+| `MON - Paywall Funnel` | Query #12 | ✅ |
+| `MON - Paywall by Entry Point` | Query #13 | ✅ |
+| `MON - Daily Monetization` | Query #14 | ✅ |
+| `Summary daily KPIs` | Query Bonus Resumen | ✅ |
+| `Query Bonus Funnel` | Query Bonus Funnel activación | ✅ |
 
 ---
 

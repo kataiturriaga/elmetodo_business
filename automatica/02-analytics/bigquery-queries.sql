@@ -24,10 +24,10 @@
 SELECT
   DATE(TIMESTAMP_MICROS(event_timestamp)) AS date,
   COUNT(DISTINCT user_pseudo_id)          AS installs
-FROM `automatica-v2.analytics_517999677.events_*`
+FROM `automatica-v2.analytics_517999677.events_combined`
 WHERE
   event_name = 'first_open'
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 GROUP BY 1
 ORDER BY 1 DESC;
 
@@ -43,18 +43,18 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 light_activations AS (
   SELECT DISTINCT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS activation_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'pedometer_enabled'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 )
 SELECT
   i.install_date,
@@ -81,9 +81,9 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 enrolls AS (
@@ -93,10 +93,10 @@ enrolls AS (
     -- Extraer parámetros del evento
     MAX(IF(ep.key = 'entry_point',  ep.value.string_value, NULL)) AS entry_point,
     MAX(IF(ep.key = 'program_type', ep.value.string_value, NULL)) AS program_type
-  FROM `automatica-v2.analytics_517999677.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_combined`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'program_enroll'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1, 2
   HAVING MAX(IF(ep.key = 'entry_point', ep.value.string_value, NULL)) = 'onboarding'
 )
@@ -124,9 +124,9 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 signups AS (
@@ -134,10 +134,10 @@ signups AS (
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS signup_date,
     MAX(IF(ep.key = 'entry_point', ep.value.string_value, NULL)) AS entry_point
-  FROM `automatica-v2.analytics_517999677.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_combined`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'signup_method_selected'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1, 2
 )
 SELECT
@@ -162,9 +162,9 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 enroll_events AS (
@@ -183,9 +183,9 @@ enroll_events AS (
       WHERE ep.key = 'program_type'
       LIMIT 1
     ) AS program_type
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'program_enroll'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 enrolls AS (
   SELECT
@@ -222,18 +222,18 @@ WITH enrolls AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS enroll_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'program_enroll'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 sessions AS (
   SELECT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS session_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'training_session_complete'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 sessions_in_window AS (
   SELECT
@@ -270,16 +270,16 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 trials AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'trial_started'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 )
 SELECT
   i.install_date,
@@ -305,9 +305,9 @@ WITH trials AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS trial_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'trial_started'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 conversions AS (
@@ -319,9 +319,9 @@ conversions AS (
       WHERE ep.key = 'tier'
       LIMIT 1
     ) AS tier
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'purchase_completed'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 )
 SELECT
   t.trial_date,
@@ -351,7 +351,7 @@ WITH funnel AS (
     user_pseudo_id,
     event_name,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS event_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name IN (
     'paywall_viewed',
     'purchase_started',
@@ -359,7 +359,7 @@ WITH funnel AS (
     'purchase_cancelled',
     'purchase_failed'
   )
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 step_counts AS (
   SELECT
@@ -397,15 +397,15 @@ SELECT
     COUNT(DISTINCT user_pseudo_id) /
     (
       SELECT COUNT(DISTINCT user_pseudo_id)
-      FROM `automatica-v2.analytics_517999677.events_*`
+      FROM `automatica-v2.analytics_517999677.events_combined`
       WHERE event_name = 'paywall_viewed'
-        AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+        AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
     ) * 100,
     1
   ) AS pct_of_total
-FROM `automatica-v2.analytics_517999677.events_*`
+FROM `automatica-v2.analytics_517999677.events_combined`
 WHERE event_name = 'paywall_viewed'
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 GROUP BY 1
 ORDER BY paywall_views DESC;
 
@@ -420,14 +420,14 @@ WITH daily AS (
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS date,
     event_name,
     user_pseudo_id
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name IN (
     'paywall_viewed', 'purchase_started', 'purchase_completed',
     'purchase_cancelled', 'purchase_failed',
     'trial_started', 'trial_ended',
     'base_expiry_warning_shown', 'base_expiry_locked_view'
   )
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 )
 SELECT
   date,
@@ -465,7 +465,7 @@ WITH funnel_events AS (
     user_pseudo_id,
     event_name,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS event_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name IN (
     'first_open',
     'training_onboarding_continue_clicked',
@@ -475,7 +475,7 @@ WITH funnel_events AS (
     'signup_completed',
     'program_enroll'
   )
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 step_counts AS (
   SELECT
@@ -504,17 +504,17 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 activity AS (
   SELECT DISTINCT
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS activity_date
-  FROM `automatica-v2.analytics_517999677.events_*`
-  WHERE _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  FROM `automatica-v2.analytics_517999677.events_combined`
+  WHERE DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
     AND event_name NOT IN ('first_open', 'session_start', 'app_remove')
 )
 SELECT
@@ -541,9 +541,9 @@ WITH installs AS (
   SELECT
     user_pseudo_id,
     MIN(TIMESTAMP_MICROS(event_timestamp)) AS install_ts
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'first_open'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 first_session AS (
@@ -551,9 +551,9 @@ first_session AS (
   SELECT
     user_pseudo_id,
     MIN(TIMESTAMP_MICROS(event_timestamp)) AS first_session_ts
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'training_session_complete'
-    AND _TABLE_SUFFIX >= @DS_START_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) >= PARSE_DATE('%Y%m%d', @DS_START_DATE)
   GROUP BY 1
 )
 SELECT
@@ -574,15 +574,15 @@ WHERE f.user_pseudo_id IS NOT NULL;
 -- ============================================================
 WITH guests AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'guest_login'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 converted AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'signup_completed'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 -- Usuarios guest que luego se registraron (guest_upgrade)
 upgraded AS (
@@ -590,10 +590,10 @@ upgraded AS (
     user_pseudo_id,
     DATE(TIMESTAMP_MICROS(event_timestamp)) AS upgrade_date,
     MAX(IF(ep.key = 'method', ep.value.string_value, NULL)) AS upgrade_method
-  FROM `automatica-v2.analytics_517999677.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_combined`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'guest_upgrade'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1, 2
 )
 SELECT
@@ -615,9 +615,9 @@ LEFT JOIN upgraded u ON g.user_pseudo_id = u.user_pseudo_id;
 -- ============================================================
 WITH enrolled_users AS (
   SELECT DISTINCT user_pseudo_id
-  FROM `automatica-v2.analytics_517999677.events_*`
+  FROM `automatica-v2.analytics_517999677.events_combined`
   WHERE event_name = 'program_enroll'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 ),
 weekly_sessions AS (
   SELECT
@@ -625,9 +625,9 @@ weekly_sessions AS (
     DATE_TRUNC(DATE(TIMESTAMP_MICROS(s.event_timestamp)), WEEK) AS week,
     COUNT(*) AS sessions_that_week
   FROM enrolled_users e
-  JOIN `automatica-v2.analytics_517999677.events_*` s ON e.user_pseudo_id = s.user_pseudo_id
+  JOIN `automatica-v2.analytics_517999677.events_combined` s ON e.user_pseudo_id = s.user_pseudo_id
   WHERE s.event_name = 'training_session_complete'
-    AND s._TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(s.event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1, 2
 )
 SELECT
@@ -653,10 +653,10 @@ SELECT
   MAX(IF(ep.key = 'entry_point',  ep.value.string_value, NULL)) AS entry_point,
   COUNT(DISTINCT user_pseudo_id)                                 AS total_enrolls,
   MAX(IF(ep.key = 'program_id',   ep.value.int_value,    NULL)) AS program_id
-FROM `automatica-v2.analytics_517999677.events_*`,
+FROM `automatica-v2.analytics_517999677.events_combined`,
 UNNEST(event_params) AS ep
 WHERE event_name = 'program_enroll'
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 GROUP BY
   -- Agrupar por program_id implícitamente a través de los parámetros
   (SELECT ep2.value.int_value FROM UNNEST(event_params) ep2 WHERE ep2.key = 'program_id' LIMIT 1),
@@ -671,25 +671,25 @@ LIMIT 20;
 -- ============================================================
 WITH daily_installs AS (
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS installs
-  FROM `automatica-v2.analytics_517999677.events_*`
-  WHERE event_name = 'first_open' AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  FROM `automatica-v2.analytics_517999677.events_combined`
+  WHERE event_name = 'first_open' AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 daily_enrolls AS (
   -- Solo entry_point=onboarding: mide activación (North Star).
   -- Catalog enrolls = engagement de usuarios ya activos, no cuentan aquí.
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS enrolls
-  FROM `automatica-v2.analytics_517999677.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_combined`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'program_enroll'
     AND ep.key = 'entry_point' AND ep.value.string_value = 'onboarding'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 ),
 daily_sessions AS (
   SELECT DATE(TIMESTAMP_MICROS(event_timestamp)) AS date, COUNT(DISTINCT user_pseudo_id) AS active_trainers
-  FROM `automatica-v2.analytics_517999677.events_*`
-  WHERE event_name = 'training_session_complete' AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  FROM `automatica-v2.analytics_517999677.events_combined`
+  WHERE event_name = 'training_session_complete' AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1
 )
 SELECT
@@ -712,9 +712,9 @@ SELECT
   DATE(TIMESTAMP_MICROS(event_timestamp)) AS date,
   COUNT(*)                                AS total_eventos,
   COUNT(DISTINCT user_pseudo_id)          AS usuarios_unicos
-FROM `automatica-v2.analytics_517999677.events_*`
+FROM `automatica-v2.analytics_517999677.events_combined`
 WHERE event_name = 'signup_completed'
-  AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
 GROUP BY 1
 ORDER BY 1 DESC;
 
@@ -733,10 +733,10 @@ FROM (
     DATE(TIMESTAMP_MICROS(event_timestamp))                      AS date,
     user_pseudo_id,
     MAX(IF(ep.key = 'entry_point', ep.value.string_value, NULL)) AS entry_point
-  FROM `automatica-v2.analytics_517999677.events_*`,
+  FROM `automatica-v2.analytics_517999677.events_combined`,
   UNNEST(event_params) AS ep
   WHERE event_name = 'program_enroll'
-    AND _TABLE_SUFFIX BETWEEN @DS_START_DATE AND @DS_END_DATE
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
   GROUP BY 1, 2
 )
 GROUP BY 1, 2
@@ -752,7 +752,7 @@ SELECT
   COUNT(DISTINCT user_pseudo_id) AS usuarios_unicos,
   MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS primera_vez,
   MAX(DATE(TIMESTAMP_MICROS(event_timestamp))) AS ultima_vez
-FROM `automatica-v2.analytics_517999677.events_*`
-WHERE _TABLE_SUFFIX BETWEEN '20260306' AND '20260310'
+FROM `automatica-v2.analytics_517999677.events_combined`
+WHERE DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN '2026-03-06' AND '2026-03-10'
 GROUP BY 1
 ORDER BY total_eventos DESC;
