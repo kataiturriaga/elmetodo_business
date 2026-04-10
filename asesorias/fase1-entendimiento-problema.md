@@ -191,6 +191,64 @@ Una pregunta sin respuesta en Fase 1 se convierte en retrabajo en Fase 3, 4 o 5.
 
 ---
 
+## 07 — ENCUESTA DE USUARIO
+### Validar hipótesis con datos reales antes de diseñar
+
+**Cuándo hacerla**
+Después de completar las secciones 02 a 06 — no antes. Las secciones anteriores definen exactamente qué no sabés y qué necesitás validar. Si mandás la encuesta sin haberlas hecho, no sabés qué preguntar y terminás con datos que no podés usar.
+
+```
+02 Proto-persona     → genera hipótesis sobre quién es el usuario
+03 JTBDs             → genera hipótesis sobre qué necesita
+05 Suposiciones      → lista lo que no sabés
+06 Preguntas         → lista lo que necesitás saber
+         ↓
+07 ENCUESTA          ← cada pregunta resuelve una suposición o cierra una pregunta abierta
+         ↓
+   Analizar resultados → actualizar proto-persona y JTBDs → cerrar checklist → pasar a Fase 2
+```
+
+**Por qué importa**
+La encuesta convierte hipótesis en datos. Sin ella, la proto-persona y los JTBDs son suposiciones propias del equipo — con ella, son decisiones respaldadas por usuarios reales. Es especialmente crítica en este proyecto porque el usuario coached todavía no existe en volumen: hay que entender al usuario actual (free/suscripción) y su disposición a pagar por coaching.
+
+**Para tu rol**
+- 🎨 Diseñadora → los resultados ajustan la proto-persona y pueden cambiar qué pantallas son prioritarias.
+- 📋 PM → los resultados validan (o invalidan) las suposiciones de negocio antes de comprometer recursos de desarrollo.
+- ⭐ Para crecer → aprendé a diseñar encuestas con intención. Cada pregunta debe tener un objetivo claro: "si la respuesta es X, entonces tomamos la decisión Y".
+
+**Cómo diseñarla bien**
+
+| Criterio | Guía |
+|----------|------|
+| Longitud | Máximo 8-10 preguntas — más de eso, la gente abandona |
+| Tipos de pregunta | 2-3 abiertas (cualitativas) + el resto cerradas (cuantitativas) |
+| Orden | Empezar con preguntas fáciles y contextuales, las más sensibles al final |
+| Objetivo por pregunta | Cada pregunta debe resolver UNA suposición o pregunta de las secciones 05/06 |
+| A quién mandar | Usuarios de distintos tiers si es posible: free, suscripción y coached si ya existen |
+
+**Preguntas sugeridas — Asesorías V2**
+
+| # | Pregunta | Qué valida |
+|---|----------|------------|
+| 1 | ¿Con qué frecuencia usás la app actualmente? (escala) | Comportamiento base del usuario |
+| 2 | ¿En qué momento del día la usás más? ¿Antes, durante o después de entrenar? | Contexto de uso → decisiones de UI |
+| 3 | ¿Qué es lo que más te cuesta cuando entrenás sin un coach? (abierta) | JTBDs y frustraciones reales |
+| 4 | ¿Alguna vez has tenido o considerado contratar un coach personal? ¿Por qué sí o no? | Disposición al tier coached |
+| 5 | Si tuvieras un coach asignado en la app, ¿qué esperarías ver cuando la abrís por primera vez? (abierta) | Expectativas del onboarding |
+| 6 | ¿Qué tan importante es para vos poder comunicarte con el coach dentro de la app? (escala 1-5) | Valida suposición de comunicación asíncrona |
+| 7 | ¿Qué información sobre tu progreso querrías que el coach pueda ver? | Métricas a registrar |
+| 8 | ¿Qué te haría sentir que el coach realmente te está siguiendo? (abierta) | JTBD emocional — sentir acompañamiento |
+
+**Cómo analizar los resultados**
+1. Buscar patrones en las respuestas abiertas — agrupar por tema
+2. Para cada suposición de la sección 05: ¿los datos la confirman o la refutan?
+3. Para cada pregunta de la sección 06: ¿tenés ahora una respuesta?
+4. Actualizar la proto-persona con lo que aprendiste
+5. Ajustar la priorización de JTBDs si alguno cambió
+6. Documentar qué suposiciones siguen abiertas y decidir si bloquean el avance a Fase 2
+
+---
+
 ## Checklist de salida — ¿Cuándo paso a Fase 2?
 
 - [ ] Problem statement escrito en 1-2 oraciones y validado con el equipo
@@ -199,3 +257,4 @@ Una pregunta sin respuesta en Fase 1 se convierte en retrabajo en Fase 3, 4 o 5.
 - [ ] Contexto de negocio documentado: objetivo, restricciones, métricas
 - [ ] Suposiciones ordenadas por riesgo
 - [ ] Preguntas bloqueantes resueltas (las 3 marcadas como 🚫)
+- [ ] Encuesta enviada, resultados analizados y proto-persona actualizada
