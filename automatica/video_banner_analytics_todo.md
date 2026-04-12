@@ -39,63 +39,6 @@ static const String daysShown = 'days_shown';
 
 > Nota: `video_id` e `video_name` ya existen como `videoId` / `videoName` en `AnalyticsParams` (usados por Explore). Valorar reutilizarlos o añadir los específicos del banner.
 
----
-
-## 3. Extension a añadir en `analytics_providers.dart`
-
-Archivo: `lib/core/analytics/analytics_providers.dart`
-
-```dart
-extension AnalyticsVideoBannerExtension on AnalyticsService {
-  Future<void> logVideoBannerShown({
-    required int videoId,
-    required String videoTitle,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoBannerDismissed({
-    required int videoId,
-    required int daysShown,
-  }) async { ... }
-
-  Future<void> logVideoOpened({
-    required int videoId,
-    required String videoTitle,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoClosedEarly({
-    required int videoId,
-    required int secondsWatched,
-    required double percentWatched,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoCompleted({
-    required int videoId,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoCtaShown({
-    required int videoId,
-    required String ctaType,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoCtaTapped({
-    required int videoId,
-    required String userType,
-  }) async { ... }
-
-  Future<void> logVideoCtaDismissed({
-    required int videoId,
-    required String ctaType,
-    required String userType,
-  }) async { ... }
-}
-```
-
----
 
 ## 4. Dónde disparar cada evento
 
