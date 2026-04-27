@@ -757,3 +757,159 @@ FROM `automatica-v2.analytics_517999677.events_combined_mat`
 WHERE DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN '2026-03-06' AND '2026-03-10'
 GROUP BY 1
 ORDER BY total_eventos DESC;
+
+
+-- ============================================================
+-- VIDEO BANNER — Query #15: Funnel principal
+-- Métrica: apertura, retención y conversión del video banner
+-- Fuente Looker Studio: "Video Banner Funnel"
+-- ============================================================
+-- Funnel:
+--   video_banner_shown → video_opened → video_completed → video_cta_tapped
+-- ============================================================
+WITH video_events AS (
+  SELECT
+    user_pseudo_id,
+    event_name,
+    DATE(TIMESTAMP_MICROS(event_timestamp)) AS event_date,
+    MAX(IF(ep.key = 'video_id',    ep.value.int_value,    NULL)) AS video_id,
+    MAX(IF(ep.key = 'video_title', ep.value.string_value, NULL)) AS video_title,
+    MAX(IF(ep.key = 'user_type',   ep.value.string_value, NULL)) AS user_type
+  FROM `automatica-v2.analytics_517999677.events_combined_mat`,
+  UNNEST(event_params) AS ep
+  WHERE event_name IN (
+      'video_banner_shown',
+      'video_opened',
+      'video_completed',
+      'video_cta_tapped'
+    )
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
+  GROUP BY 1, 2, 3
+)
+SELECT
+  event_name,
+  COUNT(DISTINCT user_pseudo_id) AS unique_users
+FROM video_events
+GROUP BY 1
+ORDER BY
+  CASE event_name
+    WHEN 'video_banner_shown' THEN 1
+    WHEN 'video_opened'       THEN 2
+    WHEN 'video_completed'    THEN 3
+    WHEN 'video_cta_tapped'   THEN 4
+  END;
+
+
+-- ============================================================
+-- VIDEO BANNER — Query #16: Tasas de conversión por video y user_type
+-- Fuente Looker Studio: "Video Banner Performance"
+-- ============================================================
+WITH base AS (
+  SELECT
+    user_pseudo_id,
+    event_name,
+    MAX(IF(ep.key = 'video_id',         ep.value.int_value,    NULL)) AS video_id,
+    MAX(IF(ep.key = 'video_title',       ep.value.string_value, NULL)) AS video_title,
+    MAX(IF(ep.key = 'user_type',         ep.value.string_value, NULL)) AS user_type,
+    MAX(IF(ep.key = 'percent_watched',   ep.value.int_value,    NULL)) AS percent_watched,
+    MAX(IF(ep.key = 'seconds_watched',   ep.value.int_value,    NULL)) AS seconds_watched,
+    MAX(IF(ep.key = 'cta_type',          ep.value.string_value, NULL)) AS cta_type
+  FROM `automatica-v2.analytics_517999677.events_combined_mat`,
+  UNNEST(event_params) AS ep
+  WHERE event_name IN (
+      'video_banner_shown',
+      'video_opened',
+      'video_completed',
+      'video_closed_early',
+      'video_cta_shown',
+      'video_cta_tapped',
+      'video_cta_dismissed'
+    )
+    AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
+  GROUP BY 1, 2
+)
+SELECT
+  video_title,
+  user_type,
+  COUNT(DISTINCT IF(event_name = 'video_banner_shown', user_pseudo_id, NULL))  AS banner_shown,
+  COUNT(DISTINCT IF(event_name = 'video_opened',       user_pseudo_id, NULL))  AS video_opened,
+  COUNT(DISTINCT IF(event_name = 'video_completed',    user_pseudo_id, NULL))  AS video_completed,
+  COUNT(DISTINCT IF(event_name = 'video_cta_tapped',   user_pseudo_id, NULL))  AS cta_tapped,
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'video_opened', user_pseudo_id, NULL))
+    / NULLIF(COUNT(DISTINCT IF(event_name = 'video_banner_shown', user_pseudo_id, NULL)), 0) * 100, 1
+  ) AS open_rate_pct,
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'video_completed', user_pseudo_id, NULL))
+    / NULLIF(COUNT(DISTINCT IF(event_name = 'video_opened', user_pseudo_id, NULL)), 0) * 100, 1
+  ) AS completion_rate_pct,
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'video_cta_tapped', user_pseudo_id, NULL))
+    / NULLIF(COUNT(DISTINCT IF(event_name = 'video_cta_shown', user_pseudo_id, NULL)), 0) * 100, 1
+  ) AS cta_conversion_rate_pct,
+  ROUND(AVG(IF(event_name IN ('video_completed', 'video_closed_early'), percent_watched, NULL)), 1) AS avg_percent_watched,
+  ROUND(AVG(IF(event_name IN ('video_completed', 'video_closed_early'), seconds_watched, NULL)), 0) AS avg_seconds_watched
+FROM base
+GROUP BY 1, 2
+ORDER BY banner_shown DESC;
+
+
+-- ============================================================
+-- VIDEO BANNER — Query #17: CTA breakdown (choose_program vs motivation)
+-- Fuente Looker Studio: "Video Banner CTA Split"
+-- ============================================================
+SELECT
+  MAX(IF(ep.key = 'cta_type',  ep.value.string_value, NULL)) AS cta_type,
+  MAX(IF(ep.key = 'user_type', ep.value.string_value, NULL)) AS user_type,
+  COUNT(DISTINCT IF(event_name = 'video_cta_shown',     user_pseudo_id, NULL)) AS cta_shown,
+  COUNT(DISTINCT IF(event_name = 'video_cta_tapped',    user_pseudo_id, NULL)) AS cta_tapped,
+  COUNT(DISTINCT IF(event_name = 'video_cta_dismissed', user_pseudo_id, NULL)) AS cta_dismissed,
+  ROUND(
+    COUNT(DISTINCT IF(event_name = 'video_cta_tapped', user_pseudo_id, NULL))
+    / NULLIF(COUNT(DISTINCT IF(event_name = 'video_cta_shown', user_pseudo_id, NULL)), 0) * 100, 1
+  ) AS tap_rate_pct
+FROM `automatica-v2.analytics_517999677.events_combined_mat`,
+UNNEST(event_params) AS ep
+WHERE event_name IN ('video_cta_shown', 'video_cta_tapped', 'video_cta_dismissed')
+  AND DATE(TIMESTAMP_MICROS(event_timestamp)) BETWEEN PARSE_DATE('%Y%m%d', @DS_START_DATE) AND PARSE_DATE('%Y%m%d', @DS_END_DATE)
+GROUP BY
+  (SELECT ep2.value.string_value FROM UNNEST(event_params) ep2 WHERE ep2.key = 'cta_type'  LIMIT 1),
+  (SELECT ep3.value.string_value FROM UNNEST(event_params) ep3 WHERE ep3.key = 'user_type' LIMIT 1)
+ORDER BY cta_shown DESC;
+
+
+-- ============================================================
+-- RETENCIÓN — Query #18: ¿Qué hace el % retenido en D7?
+-- Muestra los eventos del día exacto (activity_date = install_date + 7)
+-- para usuarios de una cohorte específica.
+-- Cambia '2026-04-07' por la fecha de instalación que quieras analizar.
+-- ============================================================
+WITH cohort AS (
+  SELECT
+    user_pseudo_id,
+    MIN(DATE(TIMESTAMP_MICROS(event_timestamp))) AS install_date
+  FROM `automatica-v2.analytics_517999677.events_combined_mat`
+  WHERE event_name = 'first_open'
+  GROUP BY 1
+),
+retained_d7 AS (
+  SELECT DISTINCT c.user_pseudo_id
+  FROM cohort c
+  JOIN `automatica-v2.analytics_517999677.events_combined_mat` e
+    ON c.user_pseudo_id = e.user_pseudo_id
+  WHERE c.install_date = '2026-04-07'
+    AND DATE(TIMESTAMP_MICROS(e.event_timestamp)) = DATE_ADD(c.install_date, INTERVAL 7 DAY)
+    AND e.event_name NOT IN ('first_open', 'session_start', 'app_remove')
+)
+SELECT
+  e.event_name,
+  COUNT(DISTINCT e.user_pseudo_id)                                        AS usuarios,
+  COUNT(*)                                                                 AS total_eventos,
+  ROUND(COUNT(DISTINCT e.user_pseudo_id) /
+    (SELECT COUNT(*) FROM retained_d7) * 100, 1)                          AS pct_del_segmento
+FROM `automatica-v2.analytics_517999677.events_combined_mat` e
+JOIN retained_d7 r ON e.user_pseudo_id = r.user_pseudo_id
+WHERE DATE(TIMESTAMP_MICROS(e.event_timestamp)) = DATE_ADD(DATE '2026-04-07', INTERVAL 7 DAY)
+  AND e.event_name NOT IN ('first_open', 'session_start', 'app_remove')
+GROUP BY 1
+ORDER BY usuarios DESC;

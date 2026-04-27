@@ -46,6 +46,9 @@ Para cada una:
 | `MON - Daily Monetization` | Query #14 | ✅ |
 | `Summary daily KPIs` | Query Bonus Resumen | ✅ |
 | `Query Bonus Funnel` | Query Bonus Funnel activación | ✅ |
+| `Video Banner Funnel` | Query #15 | ⬜ |
+| `Video Banner Performance` | Query #16 | ⬜ |
+| `Video Banner CTA Split` | Query #17 | ⬜ |
 
 ---
 
@@ -160,6 +163,33 @@ first_open → training_onboarding_continue → program_start_intent
 - Fuente: MON - Daily Monetization
 - Dimensión: `date`
 - Métricas: `paywall_views`, `purchases`, `trial_starts`
+
+---
+
+---
+
+### Página 6: Video Banner
+
+**Fila 1 — Funnel (Bar Chart horizontal)**
+- Fuente: `Video Banner Funnel`
+- Dimensión: `event_name`
+- Métrica: `unique_users`
+- Orden fijo: `video_banner_shown → video_opened → video_completed → video_cta_tapped`
+
+**Fila 2 — Scorecards clave**
+- `open_rate_pct` — fuente: `Video Banner Performance` (objetivo >30%)
+- `completion_rate_pct` — fuente: `Video Banner Performance` (objetivo >50%)
+- `cta_conversion_rate_pct` — fuente: `Video Banner Performance`
+
+**Fila 3 — Tabla de performance por video × user_type**
+- Fuente: `Video Banner Performance`
+- Columnas: `video_title`, `user_type`, `banner_shown`, `open_rate_pct`, `completion_rate_pct`, `avg_percent_watched`, `cta_conversion_rate_pct`
+- Formato condicional en `open_rate_pct`: <20% rojo | 20-40% amarillo | >40% verde
+
+**Fila 4 — CTA split (Pie Chart doble)**
+- Fuente: `Video Banner CTA Split`
+- Gráfico 1: `cta_tapped` por `cta_type` (choose_program vs motivation)
+- Gráfico 2: `tap_rate_pct` por `user_type` (guest vs trial)
 
 ---
 
