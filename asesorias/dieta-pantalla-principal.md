@@ -1,6 +1,6 @@
 # Pantalla principal de dieta — Ideación y definición
 
-**Estado:** En definición
+**Estado:** Dirección de diseño definida — pendiente validación con usuarios
 **Fecha:** Abril 2026
 
 ---
@@ -15,6 +15,8 @@ El usuario tiene que tomar **dos decisiones** para llegar a la información que 
 - **Nivel 2:** ¿Qué opción elijo? (3 opciones por comida)
 
 Hoy esas dos decisiones ocurren en pantallas separadas. Ese es el problema de fondo.
+
+**Modelo de uso:** La app es puramente de consulta — no registra qué opción eligió el usuario. No hay selección explícita.
 
 ---
 
@@ -32,46 +34,105 @@ Hoy esas dos decisiones ocurren en pantallas separadas. Ese es el problema de fo
 
 ## Soluciones evaluadas
 
-### Solución 1 — Todo en una pantalla, mismo nivel de accesibilidad
+### Solución 1 — Todo en una pantalla, mismo nivel de accesibilidad ✅ Elegida
 
 Mostrar comidas y opciones en la pantalla principal, con navegación fluida entre ambas dimensiones al mismo tiempo.
 
-**A favor:** No hay pantallas secundarias. El usuario puede moverse entre comidas y opciones sin cambiar de contexto.
+**A favor:** Cubre los dos perfiles principales. El 58% accede a su comida actual sin fricciones. El 35% ve todas las comidas del día de un vistazo.
 
-**En contra:** Es difícil encontrar un patrón de diseño que sea legible con esa densidad de información y que sea usable en mobile.
+**En contra:** Requiere encontrar un patrón de diseño que sea legible con esa densidad de información.
 
 ---
 
 ### Solución 2 — Todo en una pantalla, comida como panel secundario
 
-La opción (qué van a comer) es el protagonista. El número de comida pasa a un panel secundario, y se resuelve con contexto temporal: la app detecta la hora y muestra la comida que toca.
+La opción es el protagonista. La comida se resuelve con contexto temporal (hora actual).
 
-**A favor:** Reduce la primera decisión casi a cero si el sistema ya sabe qué comida es.
-
-**En contra:**
-- Si la configuración es por usuario y por día → 5 comidas × 7 días = 35 configuraciones. Demasiado.
-- Pierde flexibilidad (el usuario no siempre come a la misma hora).
-
-**Variante:** Usar horarios globales preestablecidos para todos los clientes, sin configuración individual. Simplifica mucho pero sacrifica personalización.
+**Descartada porque:** No cubre al 35% de usuarios que planifica el día entero — ocultar las comidas en un panel secundario les perjudica directamente.
 
 ---
 
 ### Solución 3 — Dos pantallas (solución actual)
 
-Pantalla 1: elige el número de comida. Pantalla 2: elige la opción.
-
-**En contra:** Dos taps, dos momentos de orientación. Pierde inmediatez para el caso de uso principal.
+**Descartada porque:** Dos taps, dos momentos de orientación. Pierde inmediatez para el caso de uso principal.
 
 ---
 
 ## Tensión clave entre perfiles
 
-Los dos segmentos principales tienen necesidades que parecen compatibles:
+Los dos segmentos principales tienen necesidades compatibles:
 
 - **58% (antes de comer)** → necesita ver la comida actual + sus opciones, ya.
 - **35% (una vez al día)** → necesita ver todas las comidas del día de un vistazo.
 
-Ambas necesidades podrían resolverse con el mismo diseño si se prioriza bien la jerarquía visual: comida actual como protagonista, resto del día visible pero secundario.
+Ambas necesidades se resuelven con el mismo diseño si se prioriza bien la jerarquía visual.
+
+---
+
+## Patrones explorados (Solución 1)
+
+Se exploraron 4 patrones en Figma. Los más fuertes:
+
+**P1 — Chips horizontales + opciones verticales**
+Chips scrolleables para navegar comidas. Al cambiar de chip, las 3 opciones se muestran debajo. Simple y conocido.
+
+**P4 — Lista de comidas + bottom sheet**
+El día entero visible como lista con hora. Al tocar una comida se abre un panel inferior con las opciones. Muestra contexto temporal sin configuración.
+
+**P5 — Timeline + opciones expandidas inline**
+Línea de tiempo vertical. La comida actual está expandida con sus 3 opciones. Las demás colapsadas pero visibles.
+
+> Los exploración están en Figma, página **"Dieta — Exploración"**, sección *Exploración — Pantalla principal dieta*.
+
+---
+
+## Decisión de diseño — Pantalla principal
+
+**Patrón elegido: Chips horizontales + cards con imagen (variante de P1)**
+
+### Navegación de comidas
+Chips scrolleables en la parte superior: Des. / Comida 2 / C.3 / C.4 / Cena. El chip activo en verde. Sin configuración de horarios — el usuario selecciona manualmente.
+
+### Cards de opciones
+Cada opción es una card con:
+- **Imagen a la izquierda** como columna fija (cubre toda la altura de la card, incluso expandida)
+- **Label** de opción (Opción A/B/C)
+- **Nombre** del plato
+- **Recetas asociadas** (subtexto)
+- **"Ingredientes ↓"** como affordance de expansión
+
+### Accordion de ingredientes
+Al tocar la card, se expande mostrando la lista de ingredientes con cantidades en la columna derecha (la imagen permanece fija a la izquierda — esto mantiene un único eje de alineación y evita el salto visual).
+
+Al expandir aparece también **"Ver recetas y detalle →"** como link de texto — sin peso de CTA primario, ya que la pantalla es de consulta, no de acción.
+
+Solo una card expandida a la vez (acordeón exclusivo).
+
+---
+
+## Flujo completo
+
+```
+Pantalla principal
+│
+├── Chips → navegar entre comidas del día
+│
+├── Cards → ver opciones con imagen
+│   │
+│   └── [tap card] → accordion abre ingredientes básicos
+│       │
+│       └── "Ver recetas y detalle →" → Pantalla de detalle
+│
+Pantalla de detalle
+│
+├── Tabs (Opción 1 / Opción 2 / Opción 3) → navegar opciones en profundidad
+├── Imagen grande
+├── Toggle Raciones / Unidades
+├── Lista completa de ingredientes con cantidades
+└── Recetas asociadas (cards horizontales)
+```
+
+**Estado de entrada al detalle:** el tab activo debe corresponder a la opción desde la que se navegó.
 
 ---
 
@@ -88,7 +149,7 @@ Abre la app entre 3 y 5 veces al día, justo antes de cada comida. No recuerda q
 
 - **Momento de uso:** Segundos antes de preparar o pedir la comida
 - **Necesita ver:** La comida que toca ahora + las 3 opciones disponibles
-- **Frustración actual:** Dos pantallas para llegar a la información que necesita
+- **Cómo lo resuelve el diseño:** Abre → chip de comida activo → ve 3 cards → decide. Sin necesidad de expandir ni navegar al detalle.
 
 *Hipótesis alternativa: podría abrir, mirar y luego comer algo diferente de todos modos — en ese caso el problema no es velocidad sino relevancia o adherencia.*
 
@@ -97,11 +158,11 @@ Abre la app entre 3 y 5 veces al día, justo antes de cada comida. No recuerda q
 **Perfil 2 — La planificadora diaria**
 *35% de usuarios*
 
-Abre la app una vez al día, normalmente a la mañana. Quiere tener el día claro: saber qué va a comer en cada momento, organizarse mentalmente y en algunos casos preparar cosas con anticipación.
+Abre la app una vez al día, normalmente a la mañana. Quiere tener el día claro: saber qué va a comer en cada momento.
 
 - **Momento de uso:** Mañana, antes de salir o al despertarse
 - **Necesita ver:** Todas las comidas del día de un vistazo, con sus opciones
-- **Frustración actual:** Tiene que navegar comida por comida para ver el día completo
+- **Cómo lo resuelve el diseño:** Navega chip a chip para ver cada comida. La estructura es rápida de explorar.
 
 *Hipótesis alternativa: podría abrir a mediodía para ver qué queda del día, no necesariamente a la mañana.*
 
@@ -110,25 +171,16 @@ Abre la app una vez al día, normalmente a la mañana. Quiere tener el día clar
 **Perfil 3 — La planificadora semanal**
 *30% de usuarios*
 
-Abre la app una vez a la semana, normalmente a principios de semana. Usa el menú para hacer la compra y organizarse. Una vez que lo tiene claro, no vuelve hasta la semana siguiente.
+Abre la app una vez a la semana a principios de semana para hacer la compra y organizarse.
 
-- **Momento de uso:** Inicio de semana, en casa con tiempo
-- **Necesita ver:** El menú completo de la semana
-- **Frustración actual:** La app no está diseñada para este modo — tiene que ir pantalla por pantalla
-
-*Hipótesis alternativa: podría ser un usuario con baja adherencia que abre por obligación o culpa, no por planificación activa. Diseñar para planificador vs. diseñar para usuario pasivo son cosas distintas.*
-
----
-
-## Decisión sobre el 30% semanal
-
-No diseñar la pantalla principal para este perfil. Su comportamiento es demasiado diferente al resto. Si se quiere cubrir, una funcionalidad secundaria (vista semanal, compartir menú) resuelve su caso sin comprometer el diseño principal.
+- **Decisión:** No diseñar la pantalla principal para este perfil. Comportamiento demasiado diferente. Cubrir con funcionalidad secundaria (vista semanal, compartir menú) sin comprometer el diseño principal.
 
 ---
 
 ## Próximos pasos
 
-- [ ] Validar hipótesis de perfiles — hablar con 3–4 clientes informalmente antes de que los perfiles se conviertan en verdad de diseño
-- [ ] Decidir entre Solución 1 y 2 como dirección principal
-- [ ] Explorar patrones de diseño para Solución 1 (el reto más difícil)
-- [ ] Definir si horarios globales preestablecidos son viables para Solución 2
+- [ ] Validar hipótesis de perfiles — hablar con 3–4 clientes antes de que los perfiles se conviertan en verdad de diseño
+- [ ] Definir comportamiento del chip activo al abrir la app — ¿siempre Comida 1, o la comida más cercana en el tiempo?
+- [ ] Definir máximo de opciones por comida (actualmente asumimos 3)
+- [ ] Diseñar estado vacío — ¿qué ve el usuario si una comida no tiene opciones asignadas?
+- [ ] Revisar cómo se comporta la pantalla si el nombre de la opción es muy largo (wrapping en la card)
